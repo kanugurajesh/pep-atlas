@@ -1,0 +1,125 @@
+{
+  "node_types": {
+    "PEP": "A Python Enhancement Proposal in (or referenced by) the typing corpus",
+    "Person": "An author, sponsor or decision-maker (delegate) of PEPs",
+    "Concept": "A typing construct or idea from the curated lexicon",
+    "RejectedIdea": "An alternative a PEP considered and explicitly turned down",
+    "Concern": "A recurring category of objection",
+    "Decision": "The recorded outcome of a PEP, with its stated rationale",
+    "PythonVersion": "A CPython release targeted by a PEP",
+    "Venue": "Where a PEP was discussed (mailing list or forum)",
+    "Tool": "A type checker or typing tool referenced by PEPs"
+  },
+  "edge_types": {
+    "AUTHORED_BY": {
+      "from": "PEP",
+      "to": "Person",
+      "rule": "Author header"
+    },
+    "SPONSORED_BY": {
+      "from": "PEP",
+      "to": "Person",
+      "rule": "Sponsor header"
+    },
+    "DECIDED_BY": {
+      "from": "Decision",
+      "to": "Person",
+      "rule": "BDFL-Delegate / PEP-Delegate header"
+    },
+    "HAS_DECISION": {
+      "from": "PEP",
+      "to": "Decision",
+      "rule": "Status + Resolution header + decision sections"
+    },
+    "REQUIRES": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Requires header"
+    },
+    "REPLACES": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Replaces header"
+    },
+    "SUPERSEDED_BY": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Superseded-By header"
+    },
+    "BUILDS_ON": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Reference to an earlier accepted PEP from abstract/motivation/specification"
+    },
+    "CONTRASTS_WITH": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Reference made inside a rejected-alternatives section"
+    },
+    "REFERENCES": {
+      "from": "PEP",
+      "to": "PEP",
+      "rule": "Any other :pep: / 'PEP N' reference"
+    },
+    "INTRODUCES": {
+      "from": "PEP",
+      "to": "Concept",
+      "rule": "First accepted PEP focused on the concept"
+    },
+    "EXTENDS": {
+      "from": "PEP",
+      "to": "Concept",
+      "rule": "Later accepted PEP focused on an already-introduced concept"
+    },
+    "PROPOSES": {
+      "from": "PEP",
+      "to": "Concept",
+      "rule": "Non-accepted (draft/rejected/withdrawn) PEP focused on the concept"
+    },
+    "MENTIONS": {
+      "from": "PEP",
+      "to": "Concept",
+      "rule": "Concept discussed but not the PEP's focus"
+    },
+    "CONSIDERED": {
+      "from": "PEP",
+      "to": "RejectedIdea",
+      "rule": "Sub-section of a rejected/alternatives section"
+    },
+    "ABOUT": {
+      "from": "RejectedIdea",
+      "to": "Concept",
+      "rule": "Lexicon match in the idea's heading/text"
+    },
+    "RAISES": {
+      "from": "RejectedIdea|PEP",
+      "to": "Concern",
+      "rule": "Concern cue in a rejection reason or compat/open-issues section"
+    },
+    "REVISITED_BY": {
+      "from": "RejectedIdea",
+      "to": "PEP",
+      "rule": "Derived: a later accepted PEP that cites the rejecting PEP and works on the same concept with similar wording"
+    },
+    "TARGETS": {
+      "from": "PEP",
+      "to": "PythonVersion",
+      "rule": "Python-Version header"
+    },
+    "DISCUSSED_AT": {
+      "from": "PEP",
+      "to": "Venue",
+      "rule": "Discussions-To / Post-History headers"
+    },
+    "IMPLEMENTED_IN": {
+      "from": "PEP",
+      "to": "Tool",
+      "rule": "Tool named in a reference-implementation section"
+    },
+    "MENTIONS_TOOL": {
+      "from": "PEP",
+      "to": "Tool",
+      "rule": "Tool named elsewhere"
+    }
+  }
+}

@@ -1,0 +1,458 @@
+{
+  "input": {
+    "text": "Python should enforce type hints at runtime: when a function is called with arguments of\nthe wrong type it should raise TypeError, so annotations are actually guaranteed.\n",
+    "concepts": [
+      {
+        "id": "annotations_runtime",
+        "label": "Runtime annotation access",
+        "matched": [
+          "at runtime"
+        ],
+        "specificity": 0.26
+      },
+      {
+        "id": "runtime_checking",
+        "label": "Runtime type enforcement",
+        "matched": [
+          "enforce type"
+        ],
+        "specificity": 0.41
+      }
+    ],
+    "intents": [
+      "runtime_change"
+    ],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "extends_existing_area",
+    "confidence": "medium",
+    "summary": "No PEP matches closely enough to call it the same proposal, but it builds on established concepts (Runtime annotation access, Runtime type enforcement). Nearest prior work: PEP 526 (Syntax for Variable Annotations). Expect to be measured against the decisions made there.",
+    "basis": {
+      "top_score": 0.38
+    },
+    "warnings": [
+      "May conflict with a stated non-goal of PEP 484: \"It should also be emphasized that Python will remain a dynamically typed language, and the authors have no desire to ever make type hints mandatory, even by convention.\""
+    ]
+  },
+  "closest_peps": [
+    {
+      "pep": 526,
+      "title": "Syntax for Variable Annotations",
+      "status": "Final",
+      "year": 2016,
+      "score": 0.38,
+      "why": [
+        "introduces Runtime annotation access",
+        "mentions Runtime type enforcement",
+        "shared wording: annotation, hint, function, runtime"
+      ],
+      "url": "https://peps.python.org/pep-0526/",
+      "superseded_by": [],
+      "decision": {
+        "outcome": "Final",
+        "rationale": "This PEP has been provisionally accepted by the BDFL. See the acceptance message for more color: https://mail.python.org/pipermail/python-dev/2016-September/146282.html This PEP was drafted in a separate repo: https://github.com/phouse512/peps/tree/pep-0526. There was preliminary discussion on python-ideas and at https://github.com/python/typing/issues/258. Before you bring up an objection in a public forum please at least read the summary of rejected ideas listed at the end of this PEP.",
+        "resolution": "https://mail.python.org/pipermail/python-dev/2016-September/146282.html"
+      }
+    },
+    {
+      "pep": 563,
+      "title": "Postponed Evaluation of Annotations",
+      "status": "Superseded",
+      "year": 2017,
+      "score": 0.331,
+      "why": [
+        "extends Runtime annotation access",
+        "mentions Runtime type enforcement",
+        "shared wording: annotation, hint, runtime, function"
+      ],
+      "url": "https://peps.python.org/pep-0563/",
+      "superseded_by": [
+        649,
+        749
+      ],
+      "decision": {
+        "outcome": "Superseded",
+        "rationale": "The features proposed in this PEP never became the default behaviour, and have been replaced with deferred evaluation of annotations, as proposed by 649 and 749.",
+        "resolution": "https://mail.python.org/pipermail/python-dev/2017-December/151042.html"
+      }
+    },
+    {
+      "pep": 593,
+      "title": "Flexible function and variable annotations",
+      "status": "Final",
+      "year": 2019,
+      "score": 0.316,
+      "why": [
+        "extends Runtime annotation access",
+        "shared wording: annotation, function, runtime"
+      ],
+      "url": "https://peps.python.org/pep-0593/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 849,
+      "title": "More Expressive Type Expressions",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.31,
+      "why": [
+        "proposes Runtime annotation access",
+        "shared wording: annotation, function, runtime"
+      ],
+      "url": "https://peps.python.org/pep-0849/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 649,
+      "title": "Deferred Evaluation Of Annotations Using Descriptors",
+      "status": "Final",
+      "year": 2021,
+      "score": 0.294,
+      "why": [
+        "extends Runtime annotation access",
+        "shared wording: annotation, function, hint, runtime"
+      ],
+      "url": "https://peps.python.org/pep-0649/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "The problem of forward declarations",
+      "pep": 484,
+      "section": "Rejected Alternatives / The problem of forward declarations",
+      "year": 2014,
+      "score": 0.427,
+      "summary": "The current proposal is admittedly sub-optimal when type hints must contain forward references. Python requires all names to be defined by the time they are used.",
+      "reason": "Apart from circular imports this is rarely a problem: \"use\" here means \"look up at runtime\", and with most \"forward\" references there is no problem in ensuring that a name is defined before the function using it is called. The problem with type hints is that annotations (per 3107, and similar to default values) are evaluated at the time a function is defined, and thus any names used in an annotation must be already defined when the function is being defined.",
+      "concerns": [
+        "Backward compatibility",
+        "Insufficient motivation / scope",
+        "Runtime behavior / introspection"
+      ],
+      "revisited_by": [
+        {
+          "pep": 649,
+          "title": "Deferred Evaluation Of Annotations Using Descriptors",
+          "status": "Final",
+          "confidence": 0.738
+        }
+      ]
+    },
+    {
+      "idea": "The double colon",
+      "pep": 484,
+      "section": "Rejected Alternatives / The double colon",
+      "year": 2014,
+      "score": 0.421,
+      "summary": "A few creative souls have tried to invent solutions for this problem. For example, it was proposed to use a double colon () for type hints, solving two problems at once: disambiguating between type hints and other annotations, and changing the semantics to preclude runtime evaluation. There are several things wrong with this idea, however.",
+      "reason": "A few creative souls have tried to invent solutions for this problem. There are several things wrong with this idea, however.",
+      "concerns": [
+        "Ambiguity / inconsistency",
+        "Runtime behavior / introspection",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Runtime Checkable LiteralString",
+      "pep": 675,
+      "section": "Rejected Alternatives / Runtime Checkable ``LiteralString``",
+      "year": 2021,
+      "score": 0.419,
+      "summary": "The LiteralString concept could be extended beyond static type checking to be a runtime checkable property of str objects. This would provide some benefits, such as allowing frameworks to raise errors on dynamic strings.",
+      "reason": "Such runtime errors would be a more robust defense mechanism than type errors, which can potentially be suppressed, ignored, or never even seen if the author does not use a type checker.",
+      "concerns": [
+        "Insufficient motivation / scope"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Runtime enforcement",
+      "pep": 698,
+      "section": "Rejected Alternatives / Runtime enforcement",
+      "year": 2022,
+      "score": 0.393,
+      "summary": "We considered having @typing.override enforce override safety at runtime, similarly to how @overrides.overrides does today.",
+      "reason": "We rejected this for four reasons: - For users of static type checking, it is not clear this brings any benefits. - There would be at least some performance overhead, leading to projects importing slower with runtime enforcement. We estimate the @overrides.overrides implementation takes around 100 microseconds, which is fast but could still add up to a second or more of extra initialization time in million-plus line codebases, which is exactly where we think @typing.override will be most useful. - An implementation may have edge cases where it doesn’t work well (we heard from a maintainer of o",
+      "concerns": [
+        "Ambiguity / inconsistency",
+        "Runtime cost",
+        "Runtime behavior / introspection"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Stated non-goals of PEP 484",
+      "pep": 484,
+      "section": "Rationale and Goals / Non-goals",
+      "year": 2014,
+      "score": 0.372,
+      "summary": "While the proposed typing module will contain some building blocks for runtime type checking -- in particular the get_type_hints() function -- third party packages would have to be developed to implement specific runtime type checking functionality, for example using decorators or metaclasses.",
+      "reason": "It should also be emphasized that Python will remain a dynamically typed language, and the authors have no desire to ever make type hints mandatory, even by convention.",
+      "concerns": [
+        "Impact on libraries and tools",
+        "Runtime cost",
+        "Runtime behavior / introspection"
+      ],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "runtime_semantics",
+      "label": "Runtime behavior / introspection",
+      "weight": 0.306,
+      "examples": [
+        {
+          "quote": "Apart from circular imports this is rarely a problem: \"use\" here means \"look up at runtime\", and with most \"forward\" references there is no problem in ensuring that a name is defined before the function using it is called.",
+          "source": "PEP 484 (rejected idea: The problem of forward declarations)",
+          "section": "Rejected Alternatives / The problem of forward declarations"
+        },
+        {
+          "quote": "* It's actually a feature that type hints are evaluated at runtime.",
+          "source": "PEP 484 (rejected idea: The double colon)",
+          "section": "Rejected Alternatives / The double colon"
+        }
+      ],
+      "from_intent": [
+        "runtime_change"
+      ]
+    },
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.162,
+      "examples": [
+        {
+          "quote": "This of course would run afoul of backwards compatibility, since the Python interpreter doesn't actually know whether a particular annotation is meant to be a type hint or something else.",
+          "source": "PEP 484 (rejected idea: The problem of forward declarations)",
+          "section": "Rejected Alternatives / The problem of forward declarations"
+        },
+        {
+          "quote": "This PEP is fully backwards compatible.",
+          "source": "PEP 526 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": [
+        "runtime_change"
+      ]
+    },
+    {
+      "concern": "ambiguity",
+      "label": "Ambiguity / inconsistency",
+      "weight": 0.13,
+      "examples": [
+        {
+          "quote": "For example, it was proposed to use a double colon () for type hints, solving two problems at once: disambiguating between type hints and other annotations, and changing the semantics to preclude runtime evaluation.",
+          "source": "PEP 484 (rejected idea: The double colon)",
+          "section": "Rejected Alternatives / The double colon"
+        },
+        {
+          "quote": "We estimate the @overrides.overrides implementation takes around 100 microseconds, which is fast but could still add up to a second or more of extra initialization time in million-plus line codebases, which is exactly where we think @typing.override will be most useful. - An implementation may have edge cases where it doesn’t work well (we heard from a maintainer of one such closed-source library ",
+          "source": "PEP 698 (rejected idea: Runtime enforcement)",
+          "section": "Rejected Alternatives / Runtime enforcement"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "runtime_cost",
+      "label": "Runtime cost",
+      "weight": 0.111,
+      "examples": [
+        {
+          "quote": "- For users of static type checking, it is not clear this brings any benefits. - There would be at least some performance overhead, leading to projects importing slower with runtime enforcement.",
+          "source": "PEP 698 (rejected idea: Runtime enforcement)",
+          "section": "Rejected Alternatives / Runtime enforcement"
+        },
+        {
+          "quote": "Using type hints for performance optimizations is left as an exercise for the reader.",
+          "source": "PEP 484 (rejected idea: Stated non-goals of PEP 484)",
+          "section": "Rationale and Goals / Non-goals"
+        }
+      ],
+      "from_intent": [
+        "runtime_change"
+      ]
+    },
+    {
+      "concern": "ecosystem_impact",
+      "label": "Impact on libraries and tools",
+      "weight": 0.106,
+      "examples": [
+        {
+          "quote": "While the proposed typing module will contain some building blocks for runtime type checking -- in particular the get_type_hints() function -- third party packages would have to be developed to implement specific runtime type checking functionality, for example using decorators or metaclasses.",
+          "source": "PEP 484 (rejected idea: Stated non-goals of PEP 484)",
+          "section": "Rationale and Goals / Non-goals"
+        },
+        {
+          "quote": "However, there is another set of compatibility problems: new code that is written assuming 649 semantics, but uses existing tools that eagerly evaluate annotations.",
+          "source": "PEP 749 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "insufficient_motivation",
+      "label": "Insufficient motivation / scope",
+      "weight": 0.103,
+      "examples": [
+        {
+          "quote": "Such a __future__ import statement may be proposed in a separate PEP.",
+          "source": "PEP 484 (rejected idea: The problem of forward declarations)",
+          "section": "Rejected Alternatives / The problem of forward declarations"
+        },
+        {
+          "quote": "While runtime taint checking on strings, similar to Perl's taint, has been considered and attempted in the past, and others may consider it in the future, such extensions are out of scope for this PEP.",
+          "source": "PEP 675 (rejected idea: Runtime Checkable LiteralString)",
+          "section": "Rejected Alternatives / Runtime Checkable ``LiteralString``"
+        }
+      ],
+      "from_intent": []
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 3107,
+      "title": "Function Annotations",
+      "why": "foundation of PEP 563"
+    },
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "foundation of PEP 526"
+    },
+    {
+      "pep": 483,
+      "title": "The Theory of Type Hints",
+      "why": "foundation of PEP 544 → PEP 563"
+    },
+    {
+      "pep": 526,
+      "title": "Syntax for Variable Annotations",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 544,
+      "title": "Protocols: Structural subtyping (static duck typing)",
+      "why": "foundation of PEP 563"
+    },
+    {
+      "pep": 560,
+      "title": "Core support for typing module and generic types",
+      "why": "foundation of PEP 563"
+    },
+    {
+      "pep": 563,
+      "title": "Postponed Evaluation of Annotations",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 593,
+      "title": "Flexible function and variable annotations",
+      "why": "closest prior proposal"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Imogen Hergeth",
+      "roles": {
+        "author": [
+          849
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Łukasz Langa",
+      "roles": {
+        "author": [
+          563,
+          585
+        ]
+      },
+      "last_active": 2019
+    },
+    {
+      "name": "Ivan Levkivskyi",
+      "roles": {
+        "author": [
+          526
+        ],
+        "sponsor": [
+          593
+        ]
+      },
+      "last_active": 2019
+    },
+    {
+      "name": "Jelle Zijlstra",
+      "roles": {
+        "sponsor": [
+          849
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Larry Hastings",
+      "roles": {
+        "author": [
+          649
+        ]
+      },
+      "last_active": 2021
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 849, 2026) was discussed there",
+    "example_thread": "https://discuss.python.org/t/pep-849-more-expressive-type-expressions/109189"
+  },
+  "area_track_record": {
+    "concepts": [
+      "Runtime annotation access",
+      "Runtime type enforcement"
+    ],
+    "accepted": 6,
+    "failed": 0,
+    "open": 1,
+    "peps": [
+      {
+        "pep": 526,
+        "status": "Final"
+      },
+      {
+        "pep": 563,
+        "status": "Superseded"
+      },
+      {
+        "pep": 585,
+        "status": "Final"
+      },
+      {
+        "pep": 593,
+        "status": "Final"
+      },
+      {
+        "pep": 649,
+        "status": "Final"
+      },
+      {
+        "pep": 749,
+        "status": "Final"
+      },
+      {
+        "pep": 849,
+        "status": "Draft"
+      }
+    ]
+  }
+}

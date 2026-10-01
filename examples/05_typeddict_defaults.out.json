@@ -1,0 +1,433 @@
+{
+  "input": {
+    "text": "Let TypedDict items declare default values, so that a missing NotRequired key has a known\nvalue when read, and type checkers can treat d[\"key\"] as always present.\n",
+    "concepts": [
+      {
+        "id": "required_keys",
+        "label": "Required / NotRequired keys",
+        "matched": [
+          "NotRequired"
+        ],
+        "specificity": 0.41
+      },
+      {
+        "id": "typeddict",
+        "label": "TypedDict",
+        "matched": [
+          "TypedDict"
+        ],
+        "specificity": 0.28
+      }
+    ],
+    "intents": [
+      "checker_semantics"
+    ],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "already_exists",
+    "confidence": "high",
+    "summary": "PEP 655 (Marking individual TypedDict items as required or potentially-missing, Final) covers this area and matches the proposal closely. Check that it addresses your specific mechanism; if it does not, it is the baseline your proposal extends.",
+    "basis": {
+      "pep": 655,
+      "score": 0.858,
+      "text_cosine": 0.314
+    },
+    "warnings": []
+  },
+  "closest_peps": [
+    {
+      "pep": 655,
+      "title": "Marking individual TypedDict items as required or potentially-missing",
+      "status": "Final",
+      "year": 2021,
+      "score": 0.858,
+      "why": [
+        "extends TypedDict",
+        "introduces Required / NotRequired keys",
+        "shared wording: missing, item, typeddict, key, notrequired"
+      ],
+      "url": "https://peps.python.org/pep-0655/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 589,
+      "title": "TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys",
+      "status": "Final",
+      "year": 2019,
+      "score": 0.526,
+      "why": [
+        "introduces TypedDict",
+        "mentions Required / NotRequired keys",
+        "shared wording: key, typeddict, value, valu"
+      ],
+      "url": "https://peps.python.org/pep-0589/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 728,
+      "title": "TypedDict with Typed Extra Items",
+      "status": "Final",
+      "year": 2023,
+      "score": 0.448,
+      "why": [
+        "extends TypedDict",
+        "mentions Required / NotRequired keys",
+        "shared wording: item, typeddict, key, known, read"
+      ],
+      "url": "https://peps.python.org/pep-0728/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 705,
+      "title": "TypedDict: Read-only items",
+      "status": "Final",
+      "year": 2022,
+      "score": 0.426,
+      "why": [
+        "extends TypedDict",
+        "mentions Required / NotRequired keys",
+        "shared wording: read, typeddict, item"
+      ],
+      "url": "https://peps.python.org/pep-0705/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 821,
+      "title": "Support for unpacking TypedDicts in Callable type hints",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.298,
+      "why": [
+        "proposes TypedDict",
+        "mentions Required / NotRequired keys",
+        "shared wording: typeddict"
+      ],
+      "url": "https://peps.python.org/pep-0821/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "Marking required or potentially-missing keys with an operator",
+      "pep": 655,
+      "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator",
+      "year": 2021,
+      "score": 0.563,
+      "summary": "We could use unary + as shorthand to mark a required key, unary - to mark a potentially-missing key, or unary ~ to mark a key with opposite-of-normal totality:",
+      "reason": "It was decided that it would be prudent to introduce long-form notation (i.e.",
+      "concerns": [
+        "Insufficient motivation / scope",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Special syntax around the key of a TypedDict item",
+      "pep": 655,
+      "section": "Rejected Ideas / Special syntax around the *key* of a TypedDict item",
+      "year": 2021,
+      "score": 0.548,
+      "summary": "This notation would require Python grammar changes and it is not believed that marking TypedDict items as required or potentially-missing would meet the high bar required to make such grammar changes.",
+      "reason": "This notation would require Python grammar changes and it is not believed that marking TypedDict items as required or potentially-missing would meet the high bar required to make such grammar changes. This notation causes Optional[] to take on different meanings depending on where it is positioned, which is inconsistent and confusing.",
+      "concerns": [
+        "Ambiguity / inconsistency",
+        "Readability / teachability",
+        "Cost of new syntax"
+      ],
+      "revisited_by": [
+        {
+          "pep": 705,
+          "title": "TypedDict: Read-only items",
+          "status": "Final",
+          "confidence": 0.589
+        }
+      ]
+    },
+    {
+      "idea": "Misalignment with how unions apply to values",
+      "pep": 655,
+      "section": "Rejected Ideas / Marking absence of a value with a special constant / Misalignment with how unions apply to values",
+      "year": 2021,
+      "score": 0.458,
+      "summary": "However this use of ...|Missing, equivalent to Union[..., Missing], doesn’t align well with what a union normally means: Union[...] always describes the type of a value that is present. By contrast missingness or non-totality is a property of a variable instead.",
+      "reason": "However this use of ...|Missing, equivalent to Union[..., Missing], doesn’t align well with what a union normally means: Union[...] always describes the type of a value that is present. By contrast missingness or non-totality is a property of a variable instead.",
+      "concerns": [],
+      "revisited_by": []
+    },
+    {
+      "idea": "Support a New Syntax of Specifying Keys",
+      "pep": 728,
+      "section": "Rejected Ideas / Support a New Syntax of Specifying Keys",
+      "year": 2023,
+      "score": 0.448,
+      "summary": "By introducing a new syntax that allows specifying string keys, we could deprecate the functional syntax of defining TypedDict types and address the key conflict issues if we decide to reserve a special key to type extra items.",
+      "reason": "While such users have a way to get around the issue, it's still a problem for them if they upgrade Python (or typing-extensions).",
+      "concerns": [
+        "Insufficient motivation / scope",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Support Extra Items with Intersection",
+      "pep": 728,
+      "section": "Rejected Ideas / Support Extra Items with Intersection",
+      "year": 2023,
+      "score": 0.448,
+      "summary": "Supporting intersections in Python's type system requires a lot of careful consideration, and it can take a long time for the community to reach a consensus on a reasonable design.",
+      "reason": null,
+      "concerns": [],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.278,
+      "examples": [
+        {
+          "quote": "Such operators could be implemented on type via the __pos__, __neg__ and __invert__ special methods without modifying the grammar.",
+          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
+          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
+        },
+        {
+          "quote": "This notation would require Python grammar changes and it is not believed that marking TypedDict items as required or potentially-missing would meet the high bar required to make such grammar changes.",
+          "source": "PEP 655 (rejected idea: Special syntax around the key of a TypedDict item)",
+          "section": "Rejected Ideas / Special syntax around the *key* of a TypedDict item"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "insufficient_motivation",
+      "label": "Insufficient motivation / scope",
+      "weight": 0.18,
+      "examples": [
+        {
+          "quote": "Future PEPs may reconsider introducing this or other short-form notation options.",
+          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
+          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
+        },
+        {
+          "quote": "- The types don't appear in an annotation context, so their evaluation will not be deferred.",
+          "source": "PEP 728 (rejected idea: Support a New Syntax of Specifying Keys)",
+          "section": "Rejected Ideas / Support a New Syntax of Specifying Keys"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.178,
+      "examples": [
+        {
+          "quote": "To retain backwards compatibility, type checkers should not infer a TypedDict type unless it is sufficiently clear that this is desired by the programmer.",
+          "source": "PEP 589 (compat)",
+          "section": "Backwards Compatibility"
+        },
+        {
+          "quote": "Because extra_items is an opt-in feature, no existing codebase will break due to this change.",
+          "source": "PEP 728 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "ambiguity",
+      "label": "Ambiguity / inconsistency",
+      "weight": 0.169,
+      "examples": [
+        {
+          "quote": "This notation causes Optional[] to take on different meanings depending on where it is positioned, which is inconsistent and confusing.",
+          "source": "PEP 655 (rejected idea: Special syntax around the key of a TypedDict item)",
+          "section": "Rejected Ideas / Special syntax around the *key* of a TypedDict item"
+        },
+        {
+          "quote": "* Because of generic functions, there will be plenty of cases where we can't evaluate a type operator (because it's applied to an unresolved type variable), and exactly what the type evaluation rules should be in those cases is somewhat unclear.",
+          "source": "PEP 827 (open_issues)",
+          "section": "Open Issues"
+        }
+      ],
+      "from_intent": [
+        "checker_semantics"
+      ]
+    },
+    {
+      "concern": "readability",
+      "label": "Readability / teachability",
+      "weight": 0.098,
+      "examples": [
+        {
+          "quote": "This notation causes Optional[] to take on different meanings depending on where it is positioned, which is inconsistent and confusing.",
+          "source": "PEP 655 (rejected idea: Special syntax around the key of a TypedDict item)",
+          "section": "Rejected Ideas / Special syntax around the *key* of a TypedDict item"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "runtime_semantics",
+      "label": "Runtime behavior / introspection",
+      "weight": 0.045,
+      "examples": [
+        {
+          "quote": "Tools that specifically rely on introspecting annotations at runtime (tools that parse Python files are obviously unaffected) that want to extract the annotations unevaluated and process them in some way are possibly in more trouble.",
+          "source": "PEP 827 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 483,
+      "title": "The Theory of Type Hints",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 586,
+      "title": "Literal Types",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 591,
+      "title": "Adding a final qualifier to typing",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 589,
+      "title": "TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 655,
+      "title": "Marking individual TypedDict items as required or potentially-missing",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 692,
+      "title": "Using TypedDict for more precise **kwargs typing",
+      "why": "foundation of PEP 728"
+    },
+    {
+      "pep": 728,
+      "title": "TypedDict with Typed Extra Items",
+      "why": "closest prior proposal"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Guido van Rossum",
+      "roles": {
+        "sponsor": [
+          589,
+          655
+        ],
+        "delegate": [
+          589
+        ]
+      },
+      "last_active": 2021
+    },
+    {
+      "name": "David Foster",
+      "roles": {
+        "author": [
+          655
+        ]
+      },
+      "last_active": 2021
+    },
+    {
+      "name": "Jelle Zijlstra",
+      "roles": {
+        "sponsor": [
+          728,
+          821
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Zixuan James Li",
+      "roles": {
+        "author": [
+          728
+        ]
+      },
+      "last_active": 2023
+    },
+    {
+      "name": "Daniel Sperber",
+      "roles": {
+        "author": [
+          821
+        ]
+      },
+      "last_active": 2026
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 821, 2026) was discussed there",
+    "example_thread": "https://discuss.python.org/t/105952"
+  },
+  "area_track_record": {
+    "concepts": [
+      "Required / NotRequired keys",
+      "TypedDict"
+    ],
+    "accepted": 5,
+    "failed": 0,
+    "open": 3,
+    "peps": [
+      {
+        "pep": 589,
+        "status": "Final"
+      },
+      {
+        "pep": 655,
+        "status": "Final"
+      },
+      {
+        "pep": 692,
+        "status": "Final"
+      },
+      {
+        "pep": 705,
+        "status": "Final"
+      },
+      {
+        "pep": 728,
+        "status": "Final"
+      },
+      {
+        "pep": 764,
+        "status": "Draft"
+      },
+      {
+        "pep": 821,
+        "status": "Draft"
+      },
+      {
+        "pep": 827,
+        "status": "Draft"
+      }
+    ]
+  }
+}

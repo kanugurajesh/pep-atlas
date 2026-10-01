@@ -1,0 +1,1 @@
+Why are there two narrowing helpers, TypeGuard and TypeIs, and why doesn't TypeGuard narrow in the negative case?

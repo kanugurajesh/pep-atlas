@@ -1,0 +1,2 @@
+Python should enforce type hints at runtime: when a function is called with arguments of
+the wrong type it should raise TypeError, so annotations are actually guaranteed.

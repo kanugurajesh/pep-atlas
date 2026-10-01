@@ -1,0 +1,1 @@
+Allow T? as a shorthand for Optional[T] in annotations, like Kotlin and TypeScript do.

@@ -1,0 +1,2 @@
+Type checkers should infer the variance of type parameters on Protocol classes automatically
+instead of requiring covariant=True / contravariant=True on the TypeVar.

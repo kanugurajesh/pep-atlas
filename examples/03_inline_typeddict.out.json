@@ -1,0 +1,424 @@
+{
+  "input": {
+    "text": "Add a way to write a TypedDict inline in an annotation without declaring a class first,\ne.g. def get_user() -> {\"name\": str, \"age\": int}: ...\n",
+    "concepts": [
+      {
+        "id": "inline_typeddict",
+        "label": "Inline TypedDict",
+        "matched": [
+          "TypedDict inline"
+        ],
+        "specificity": 0.55
+      },
+      {
+        "id": "typeddict",
+        "label": "TypedDict",
+        "matched": [
+          "TypedDict"
+        ],
+        "specificity": 0.28
+      }
+    ],
+    "intents": [],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "in_progress",
+    "confidence": "high",
+    "summary": "PEP 764 (Inline typed dictionaries) is an open draft on this topic; contributing to it is likely more effective than a competing PEP.",
+    "basis": {
+      "pep": 764,
+      "score": 0.791,
+      "text_cosine": 0.214
+    },
+    "warnings": []
+  },
+  "closest_peps": [
+    {
+      "pep": 764,
+      "title": "Inline typed dictionaries",
+      "status": "Draft",
+      "year": 2024,
+      "score": 0.791,
+      "why": [
+        "proposes TypedDict",
+        "proposes Inline TypedDict",
+        "shared wording: inline, add, class, annotation"
+      ],
+      "url": "https://peps.python.org/pep-0764/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 728,
+      "title": "TypedDict with Typed Extra Items",
+      "status": "Final",
+      "year": 2023,
+      "score": 0.314,
+      "why": [
+        "extends TypedDict",
+        "shared wording: typeddict, str, without, class"
+      ],
+      "url": "https://peps.python.org/pep-0728/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 589,
+      "title": "TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys",
+      "status": "Final",
+      "year": 2019,
+      "score": 0.273,
+      "why": [
+        "introduces TypedDict",
+        "shared wording: typeddict, class"
+      ],
+      "url": "https://peps.python.org/pep-0589/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 692,
+      "title": "Using TypedDict for more precise **kwargs typing",
+      "status": "Final",
+      "year": 2022,
+      "score": 0.268,
+      "why": [
+        "extends TypedDict",
+        "shared wording: typeddict, way, annotation"
+      ],
+      "url": "https://peps.python.org/pep-0692/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 821,
+      "title": "Support for unpacking TypedDicts in Callable type hints",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.261,
+      "why": [
+        "proposes TypedDict",
+        "shared wording: typeddict"
+      ],
+      "url": "https://peps.python.org/pep-0821/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "Support a New Syntax of Specifying Keys",
+      "pep": 728,
+      "section": "Rejected Ideas / Support a New Syntax of Specifying Keys",
+      "year": 2023,
+      "score": 0.316,
+      "summary": "By introducing a new syntax that allows specifying string keys, we could deprecate the functional syntax of defining TypedDict types and address the key conflict issues if we decide to reserve a special key to type extra items.",
+      "reason": "While such users have a way to get around the issue, it's still a problem for them if they upgrade Python (or typing-extensions).",
+      "concerns": [
+        "Insufficient motivation / scope",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Change Optional to mean “optional item” in certain contexts instead of “nullable”",
+      "pep": 655,
+      "section": "Rejected Ideas / Change Optional to mean “optional item” in certain contexts instead of “nullable”",
+      "year": 2021,
+      "score": 0.299,
+      "summary": "Consider the use of a special flag on a TypedDict definition to alter the interpretation of Optional inside the TypedDict to mean “optional item” rather than its usual meaning of “nullable”:",
+      "reason": "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": [
+        {
+          "pep": 705,
+          "title": "TypedDict: Read-only items",
+          "status": "Final",
+          "confidence": 0.584
+        }
+      ]
+    },
+    {
+      "idea": "Rejected Alternatives (PEP 589)",
+      "pep": 589,
+      "section": "Rejected Alternatives",
+      "year": 2019,
+      "score": 0.295,
+      "summary": "Several proposed ideas were rejected. The current set of features seem to cover a lot of ground, and it was not clear which of the proposed extensions would be more than marginally useful. This PEP defines a baseline feature that can be potentially extended later.",
+      "reason": "Several proposed ideas were rejected. The current set of features seem to cover a lot of ground, and it was not clear which of the proposed extensions would be more than marginally useful.",
+      "concerns": [
+        "Impact on libraries and tools",
+        "Runtime behavior / introspection"
+      ],
+      "revisited_by": [
+        {
+          "pep": 655,
+          "title": "Marking individual TypedDict items as required or potentially-missing",
+          "status": "Final",
+          "confidence": 0.579
+        }
+      ]
+    },
+    {
+      "idea": "Using dict or typing.Dict with a single type argument",
+      "pep": 764,
+      "section": "Rejected Ideas / Using ``dict`` or ``typing.Dict`` with a single type argument",
+      "year": 2024,
+      "score": 0.292,
+      "summary": "We could reuse dict or typing.Dict with a single type argument to express the same concept::",
+      "reason": "Allowing dict to be parametrized with a single type argument would require special casing from type checkers, as there is no way to express parametrization overloads. Having it used for a new typing feature would be confusing for users (and would require changes in code linters).",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Rejected Ideas (PEP 821)",
+      "pep": 821,
+      "section": "Rejected Ideas",
+      "year": 2026,
+      "score": 0.286,
+      "summary": "- Combining Unpack[TD] with Concatenate. With such support, one could write Callable[Concatenate[int, Unpack[TD], P], R] which in turn would allow a keyword-only parameter between *args and kwargs, i.e. def func(*args: Any, a: int, kwargs: Any) -> R: ... which is currently not allowed per 612.",
+      "reason": null,
+      "concerns": [],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.302,
+      "examples": [
+        {
+          "quote": "To retain backwards compatibility, type checkers should not infer a TypedDict type unless it is sufficiently clear that this is desired by the programmer.",
+          "source": "PEP 589 (compat)",
+          "section": "Backwards Compatibility"
+        },
+        {
+          "quote": "Because extra_items is an opt-in feature, no existing codebase will break due to this change.",
+          "source": "PEP 728 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "readability",
+      "label": "Readability / teachability",
+      "weight": 0.178,
+      "examples": [
+        {
+          "quote": "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag.",
+          "source": "PEP 655 (rejected idea: Change Optional to mean “optional item” in certain contexts instead of “nullable”)",
+          "section": "Rejected Ideas / Change Optional to mean “optional item” in certain contexts instead of “nullable”"
+        },
+        {
+          "quote": "Having it used for a new typing feature would be confusing for users (and would require changes in code linters).",
+          "source": "PEP 764 (rejected idea: Using dict or typing.Dict with a single type argument)",
+          "section": "Rejected Ideas / Using ``dict`` or ``typing.Dict`` with a single type argument"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "runtime_semantics",
+      "label": "Runtime behavior / introspection",
+      "weight": 0.165,
+      "examples": [
+        {
+          "quote": "TypedDict objects are regular dictionaries at runtime, and TypedDict cannot be used with other dictionary-like or mapping-like classes, including subclasses of dict.",
+          "source": "PEP 589 (rejected idea: Rejected Alternatives (PEP 589))",
+          "section": "Rejected Alternatives"
+        },
+        {
+          "quote": "Tools that specifically rely on introspecting annotations at runtime (tools that parse Python files are obviously unaffected) that want to extract the annotations unevaluated and process them in some way are possibly in more trouble.",
+          "source": "PEP 827 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "insufficient_motivation",
+      "label": "Insufficient motivation / scope",
+      "weight": 0.095,
+      "examples": [
+        {
+          "quote": "- The types don't appear in an annotation context, so their evaluation will not be deferred.",
+          "source": "PEP 728 (rejected idea: Support a New Syntax of Specifying Keys)",
+          "section": "Rejected Ideas / Support a New Syntax of Specifying Keys"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.095,
+      "examples": [
+        {
+          "quote": "By introducing a new syntax that allows specifying string keys, we could deprecate the functional syntax of defining TypedDict types and address the key conflict issues if we decide to reserve a special key to type extra items.",
+          "source": "PEP 728 (rejected idea: Support a New Syntax of Specifying Keys)",
+          "section": "Rejected Ideas / Support a New Syntax of Specifying Keys"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "ecosystem_impact",
+      "label": "Impact on libraries and tools",
+      "weight": 0.089,
+      "examples": [
+        {
+          "quote": "Such functionality can be provided by a third-party library using the typing_inspect [#typing_inspect]_ third-party module, for example.",
+          "source": "PEP 589 (rejected idea: Rejected Alternatives (PEP 589))",
+          "section": "Rejected Alternatives"
+        }
+      ],
+      "from_intent": []
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 483,
+      "title": "The Theory of Type Hints",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 586,
+      "title": "Literal Types",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 591,
+      "title": "Adding a final qualifier to typing",
+      "why": "foundation of PEP 589"
+    },
+    {
+      "pep": 589,
+      "title": "TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 692,
+      "title": "Using TypedDict for more precise **kwargs typing",
+      "why": "foundation of PEP 728"
+    },
+    {
+      "pep": 728,
+      "title": "TypedDict with Typed Extra Items",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 764,
+      "title": "Inline typed dictionaries",
+      "why": "closest prior proposal"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Victorien Plot",
+      "roles": {
+        "author": [
+          764
+        ]
+      },
+      "last_active": 2024
+    },
+    {
+      "name": "Jelle Zijlstra",
+      "roles": {
+        "sponsor": [
+          692,
+          728,
+          821
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Eric Traut",
+      "roles": {
+        "sponsor": [
+          764
+        ]
+      },
+      "last_active": 2024
+    },
+    {
+      "name": "Daniel Sperber",
+      "roles": {
+        "author": [
+          821
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Zixuan James Li",
+      "roles": {
+        "author": [
+          728
+        ]
+      },
+      "last_active": 2023
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 821, 2026) was discussed there",
+    "example_thread": "https://discuss.python.org/t/105952"
+  },
+  "area_track_record": {
+    "concepts": [
+      "Inline TypedDict",
+      "TypedDict"
+    ],
+    "accepted": 5,
+    "failed": 0,
+    "open": 3,
+    "peps": [
+      {
+        "pep": 589,
+        "status": "Final"
+      },
+      {
+        "pep": 655,
+        "status": "Final"
+      },
+      {
+        "pep": 692,
+        "status": "Final"
+      },
+      {
+        "pep": 705,
+        "status": "Final"
+      },
+      {
+        "pep": 728,
+        "status": "Final"
+      },
+      {
+        "pep": 764,
+        "status": "Draft"
+      },
+      {
+        "pep": 821,
+        "status": "Draft"
+      },
+      {
+        "pep": 827,
+        "status": "Draft"
+      }
+    ]
+  }
+}

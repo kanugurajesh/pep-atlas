@@ -1,0 +1,425 @@
+{
+  "input": {
+    "text": "Type checkers should infer the variance of type parameters on Protocol classes automatically\ninstead of requiring covariant=True / contravariant=True on the TypeVar.\n",
+    "concepts": [
+      {
+        "id": "protocols",
+        "label": "Protocols (structural subtyping)",
+        "matched": [
+          "Protocol",
+          "Protocol classes"
+        ],
+        "specificity": 0.39
+      },
+      {
+        "id": "typevar",
+        "label": "TypeVar",
+        "matched": [
+          "TypeVar"
+        ],
+        "specificity": 0.29
+      },
+      {
+        "id": "variance",
+        "label": "Variance",
+        "matched": [
+          "contravariant",
+          "covariant",
+          "variance"
+        ],
+        "specificity": 0.37
+      }
+    ],
+    "intents": [
+      "checker_semantics"
+    ],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "previously_rejected_alternative",
+    "confidence": "medium",
+    "summary": "Something close to this was considered and rejected as an alternative in PEP 544 (\"Overriding inferred variance of protocol classes\").",
+    "basis": {
+      "idea": "Overriding inferred variance of protocol classes",
+      "pep": 544,
+      "score": 0.875
+    },
+    "warnings": []
+  },
+  "closest_peps": [
+    {
+      "pep": 695,
+      "title": "Type Parameter Syntax",
+      "status": "Final",
+      "year": 2022,
+      "score": 0.468,
+      "why": [
+        "extends TypeVar",
+        "extends Variance",
+        "mentions Protocols (structural subtyping)",
+        "shared wording: variance, typevar, parameter, class"
+      ],
+      "url": "https://peps.python.org/pep-0695/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 544,
+      "title": "Protocols: Structural subtyping (static duck typing)",
+      "status": "Final",
+      "year": 2017,
+      "score": 0.396,
+      "why": [
+        "introduces Protocols (structural subtyping)",
+        "mentions TypeVar",
+        "mentions Variance",
+        "shared wording: protocol, covariant, variance, class, checker"
+      ],
+      "url": "https://peps.python.org/pep-0544/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "status": "Final",
+      "year": 2014,
+      "score": 0.372,
+      "why": [
+        "introduces TypeVar",
+        "introduces Variance",
+        "shared wording: class, parameter"
+      ],
+      "url": "https://peps.python.org/pep-0484/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 673,
+      "title": "Self Type",
+      "status": "Final",
+      "year": 2021,
+      "score": 0.328,
+      "why": [
+        "extends TypeVar",
+        "shared wording: infer, typevar, protocol, class, checker"
+      ],
+      "url": "https://peps.python.org/pep-0673/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 696,
+      "title": "Type Defaults for Type Parameters",
+      "status": "Final",
+      "year": 2022,
+      "score": 0.194,
+      "why": [
+        "extends TypeVar",
+        "shared wording: parameter, typevar"
+      ],
+      "url": "https://peps.python.org/pep-0696/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "Overriding inferred variance of protocol classes",
+      "pep": 544,
+      "section": "Rejected/Postponed Ideas / Overriding inferred variance of protocol classes",
+      "year": 2017,
+      "score": 0.875,
+      "summary": "It was proposed to allow declaring protocols as invariant if they are actually covariant or contravariant (as it is possible for nominal classes, see 484). However, it was decided not to do this because of several downsides:",
+      "reason": "However, it was decided not to do this because of several downsides: * Declared protocol invariance breaks transitivity of sub-typing.",
+      "concerns": [],
+      "revisited_by": []
+    },
+    {
+      "idea": "Explicit Variance",
+      "pep": 695,
+      "section": "Rejected Ideas / Explicit Variance",
+      "year": 2022,
+      "score": 0.709,
+      "summary": "We considered adding syntax for specifying whether a type parameter is intended to be invariant, covariant, or contravariant. The typing.TypeVar mechanism in Python requires this. A few other languages including Scala and C# also require developers to specify the variance.",
+      "reason": "We rejected this idea because variance can generally be inferred, and most modern programming languages do infer variance based on usage. Variance is an advanced topic that many developers find confusing, so we want to eliminate the need to understand this concept for most Python developers.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Construction of TypeVarTuple",
+      "pep": 646,
+      "section": "Rationale and Rejected Ideas / Construction of ``TypeVarTuple``",
+      "year": 2020,
+      "score": 0.443,
+      "summary": "TypeVarTuple began as ListVariadic, based on its naming in an early implementation in Pyre.",
+      "reason": "Once we'd decided that a variadic type variable should behave like a Tuple, we also considered TypeVar(bound=Tuple), which is similarly intuitive and accomplishes most what we wanted without requiring any new arguments to TypeVar. However, we realised this may constrain us in the future, if for example we want type bounds or variance to function slightly differently for variadic type variables than what the semantics of TypeVar might otherwise imply.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": [
+        {
+          "pep": 696,
+          "title": "Type Defaults for Type Parameters",
+          "status": "Final",
+          "confidence": 0.586
+        }
+      ]
+    },
+    {
+      "idea": "Marking required or potentially-missing keys with an operator",
+      "pep": 655,
+      "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator",
+      "year": 2021,
+      "score": 0.407,
+      "summary": "We could use unary + as shorthand to mark a required key, unary - to mark a potentially-missing key, or unary ~ to mark a key with opposite-of-normal totality:",
+      "reason": "It was decided that it would be prudent to introduce long-form notation (i.e.",
+      "concerns": [
+        "Insufficient motivation / scope",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Covariant subtyping of mutable attributes",
+      "pep": 544,
+      "section": "Rejected/Postponed Ideas / Covariant subtyping of mutable attributes",
+      "year": 2017,
+      "score": 0.359,
+      "summary": "Rejected because covariant subtyping of mutable attributes is not safe. Consider this example::",
+      "reason": "Rejected because covariant subtyping of mutable attributes is not safe. It was initially proposed to allow this for practical reasons, but it was subsequently rejected, since this may mask some hard to spot bugs.",
+      "concerns": [],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "readability",
+      "label": "Readability / teachability",
+      "weight": 0.41,
+      "examples": [
+        {
+          "quote": "Variance is an advanced topic that many developers find confusing, so we want to eliminate the need to understand this concept for most Python developers.",
+          "source": "PEP 695 (rejected idea: Explicit Variance)",
+          "section": "Rejected Ideas / Explicit Variance"
+        },
+        {
+          "quote": "Once we'd decided that a variadic type variable should behave like a Tuple, we also considered TypeVar(bound=Tuple), which is similarly intuitive and accomplishes most what we wanted without requiring any new arguments to TypeVar.",
+          "source": "PEP 646 (rejected idea: Construction of TypeVarTuple)",
+          "section": "Rationale and Rejected Ideas / Construction of ``TypeVarTuple``"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.192,
+      "examples": [
+        {
+          "quote": "Such operators could be implemented on type via the __pos__, __neg__ and __invert__ special methods without modifying the grammar.",
+          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
+          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
+        },
+        {
+          "quote": "Note that the use of the star operator in this context requires a grammar change, and is therefore available only in new versions of Python.",
+          "source": "PEP 646 (compat)",
+          "section": "Specification / Type Variable Tuples / ``Unpack`` for Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.146,
+      "examples": [
+        {
+          "quote": "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially extension modules.",
+          "source": "PEP 484 (compat)",
+          "section": "Rejected Alternatives / Other backwards compatible conventions"
+        },
+        {
+          "quote": "This PEP is fully backwards compatible.",
+          "source": "PEP 544 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "insufficient_motivation",
+      "label": "Insufficient motivation / scope",
+      "weight": 0.119,
+      "examples": [
+        {
+          "quote": "Future PEPs may reconsider introducing this or other short-form notation options.",
+          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
+          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "soundness",
+      "label": "Type safety / soundness",
+      "weight": 0.044,
+      "examples": [],
+      "from_intent": [
+        "checker_semantics"
+      ]
+    },
+    {
+      "concern": "checker_complexity",
+      "label": "Burden on type checkers",
+      "weight": 0.044,
+      "examples": [],
+      "from_intent": [
+        "checker_semantics"
+      ]
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 483,
+      "title": "The Theory of Type Hints",
+      "why": "foundation of PEP 695"
+    },
+    {
+      "pep": 544,
+      "title": "Protocols: Structural subtyping (static duck typing)",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 563,
+      "title": "Postponed Evaluation of Annotations",
+      "why": "foundation of PEP 695"
+    },
+    {
+      "pep": 612,
+      "title": "Parameter Specification Variables",
+      "why": "foundation of PEP 695"
+    },
+    {
+      "pep": 613,
+      "title": "Explicit Type Aliases",
+      "why": "foundation of PEP 695"
+    },
+    {
+      "pep": 646,
+      "title": "Variadic Generics",
+      "why": "foundation of PEP 695"
+    },
+    {
+      "pep": 695,
+      "title": "Type Parameter Syntax",
+      "why": "closest prior proposal"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Guido van Rossum",
+      "roles": {
+        "sponsor": [
+          695
+        ],
+        "delegate": [
+          544
+        ],
+        "author": [
+          484
+        ]
+      },
+      "last_active": 2022
+    },
+    {
+      "name": "Eric Traut",
+      "roles": {
+        "author": [
+          695,
+          724
+        ]
+      },
+      "last_active": 2023
+    },
+    {
+      "name": "James Hilton-Balfe",
+      "roles": {
+        "author": [
+          673,
+          696
+        ]
+      },
+      "last_active": 2022
+    },
+    {
+      "name": "Jelle Zijlstra",
+      "roles": {
+        "sponsor": [
+          673,
+          696,
+          724
+        ]
+      },
+      "last_active": 2023
+    },
+    {
+      "name": "Jukka Lehtosalo",
+      "roles": {
+        "author": [
+          484,
+          544
+        ]
+      },
+      "last_active": 2017
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 724, 2023) was discussed there",
+    "example_thread": "https://discuss.python.org/t/pep-724-stricter-type-guards/34124"
+  },
+  "area_track_record": {
+    "concepts": [
+      "Protocols (structural subtyping)",
+      "TypeVar",
+      "Variance"
+    ],
+    "accepted": 6,
+    "failed": 0,
+    "open": 0,
+    "peps": [
+      {
+        "pep": 484,
+        "status": "Final"
+      },
+      {
+        "pep": 544,
+        "status": "Final"
+      },
+      {
+        "pep": 646,
+        "status": "Final"
+      },
+      {
+        "pep": 673,
+        "status": "Final"
+      },
+      {
+        "pep": 695,
+        "status": "Final"
+      },
+      {
+        "pep": 696,
+        "status": "Final"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+Let TypedDict items declare default values, so that a missing NotRequired key has a known
+value when read, and type checkers can treat d["key"] as always present.

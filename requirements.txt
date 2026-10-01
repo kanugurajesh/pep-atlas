@@ -1,0 +1,5 @@
+# Runtime: the core pipeline is pure standard library. `rich` only prettifies terminal output
+# (the CLI falls back to plain Markdown without it).
+rich>=13
+# Tests
+pytest>=7

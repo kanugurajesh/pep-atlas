@@ -1,0 +1,401 @@
+{
+  "input": {
+    "text": "I'd like to propose a shorthand syntax for callable types: write (int, str) -> bool\ninstead of Callable[[int, str], bool]. The nested brackets are hard to read,\nespecially for higher-order functions and decorators.\n",
+    "concepts": [
+      {
+        "id": "callable_syntax",
+        "label": "Callable arrow syntax",
+        "matched": [
+          "shorthand syntax for callable"
+        ],
+        "specificity": 0.55
+      },
+      {
+        "id": "callable_types",
+        "label": "Callable types",
+        "matched": [
+          "Callable",
+          "callable types"
+        ],
+        "specificity": 0.31
+      }
+    ],
+    "intents": [
+      "new_syntax"
+    ],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "previously_rejected",
+    "confidence": "high",
+    "summary": "PEP 677 (Callable Type Syntax) proposed this and was rejected. A new attempt has to answer the reasons recorded in its decision.",
+    "basis": {
+      "pep": 677,
+      "score": 0.955,
+      "text_cosine": 0.36
+    },
+    "warnings": []
+  },
+  "closest_peps": [
+    {
+      "pep": 677,
+      "title": "Callable Type Syntax",
+      "status": "Rejected",
+      "year": 2021,
+      "score": 0.955,
+      "why": [
+        "proposes Callable types",
+        "proposes Callable arrow syntax",
+        "shared wording: callable, bool, int, str, syntax"
+      ],
+      "url": "https://peps.python.org/pep-0677/",
+      "superseded_by": [],
+      "decision": {
+        "outcome": "Rejected",
+        "rationale": null,
+        "resolution": "https://mail.python.org/archives/list/python-dev@python.org/message/NHCLHCU2XCWTBGF732WESMN42YYVKOXB/"
+      }
+    },
+    {
+      "pep": 612,
+      "title": "Parameter Specification Variables",
+      "status": "Final",
+      "year": 2019,
+      "score": 0.428,
+      "why": [
+        "extends Callable types",
+        "shared wording: callable, bool, int, str, decorator"
+      ],
+      "url": "https://peps.python.org/pep-0612/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 821,
+      "title": "Support for unpacking TypedDicts in Callable type hints",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.305,
+      "why": [
+        "proposes Callable types",
+        "shared wording: callable, function"
+      ],
+      "url": "https://peps.python.org/pep-0821/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "status": "Final",
+      "year": 2014,
+      "score": 0.273,
+      "why": [
+        "introduces Callable types",
+        "shared wording: callable, bracket, syntax, function"
+      ],
+      "url": "https://peps.python.org/pep-0484/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 827,
+      "title": "Type Manipulation",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.256,
+      "why": [
+        "proposes Callable types",
+        "shared wording: callable, like, syntax, decorator, function"
+      ],
+      "url": "https://peps.python.org/pep-0827/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "Requiring Outer Parentheses",
+      "pep": 677,
+      "section": "Rejected Alternatives / Other Proposals Considered / Requiring Outer Parentheses",
+      "year": 2021,
+      "score": 0.758,
+      "summary": "A concern with the current proposal is readability, particularly when callable types are used in return type position which leads to multiple top-level -> tokens, for example::",
+      "reason": "This makes the nesting of many examples that are difficult to follow clear, but we rejected it because We rejected this change because: - The outer parentheses only help readability in some cases, mostly when a callable type is used in return position.",
+      "concerns": [
+        "Readability / teachability",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Hybrid keyword-arrow Syntax",
+      "pep": 677,
+      "section": "Rejected Alternatives / Other Proposals Considered / Hybrid keyword-arrow Syntax",
+      "year": 2021,
+      "score": 0.73,
+      "summary": "In the Rust language, a keyword fn is used to indicate functions in much the same way as Python's def, and callable types are indicated using a hybrid arrow syntax Fn(i64, String) -> bool.",
+      "reason": "But we think this might confuse readers into thinking def(A, B) -> C is a lambda, particularly because Javascript's function keyword is used in both named and anonymous functions.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Making -> bind tighter than |",
+      "pep": 677,
+      "section": "Rejected Alternatives / Other Proposals Considered / Making ``->`` bind tighter than ``|``",
+      "year": 2021,
+      "score": 0.67,
+      "summary": "In order to allow both -> and | tokens in type expressions we had to choose precedence. In the current proposal, this is a function returning an optional boolean::",
+      "reason": "We considered having -> bind tighter so that instead the expression would parse as ((int, str) -> bool) | None. - It means we no would longer have to treat None | (int, str) -> bool as a syntax error. - Looking at typeshed today, optional callable arguments are very common because using None as a default value is a standard Python idiom.",
+      "concerns": [
+        "Impact on libraries and tools",
+        "Readability / teachability"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Improving Usability of the Indexed Callable Type",
+      "pep": 677,
+      "section": "Rejected Alternatives / Other Proposals Considered / Improving Usability of the Indexed Callable Type",
+      "year": 2021,
+      "score": 0.595,
+      "summary": "If we do not want to add new syntax for callable types, we could look at how to make the existing type easier to read. One proposal would be to make the builtin callable function indexable so that it could be used as a type::",
+      "reason": "One proposal would be to make the builtin callable function indexable so that it could be used as a type:: This change would be analogous to 585 that made built in collections like list and dict usable as types, and would make imports more convenient, but it wouldn't help readability of the types themselves much. In order to reduce the number of brackets needed in complex callable types, it would be possible to allow tuples for the argument list:: This actually is a significant readability improvement for multi-argument functions, but the problem is that it makes callables with one arguments, ",
+      "concerns": [
+        "Readability / teachability",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Using the plain return type in __args__ for async types",
+      "pep": 677,
+      "section": "Rejected Alternatives / Alternative Runtime Behaviors / Using the plain return type in ``__args__`` for async types",
+      "year": 2021,
+      "score": 0.44,
+      "summary": "It is debatable whether we are required to preserve backward compatibility of __args__ for async callable types like async (int) -> str. The reason is that one could argue they are not expressible directly using typing.Callable, and therefore it would be fine to set __args__ as (int, int) rather than (int, typing.Awaitable[int]).",
+      "reason": "The reason is that one could argue they are not expressible directly using typing.Callable, and therefore it would be fine to set __args__ as (int, int) rather than (int, typing.Awaitable[int]). But we believe this would be problematic.",
+      "concerns": [
+        "Backward compatibility"
+      ],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "readability",
+      "label": "Readability / teachability",
+      "weight": 0.375,
+      "examples": [
+        {
+          "quote": "A concern with the current proposal is readability, particularly when callable types are used in return type position which leads to multiple top-level -> tokens, for example::",
+          "source": "PEP 677 (rejected idea: Requiring Outer Parentheses)",
+          "section": "Rejected Alternatives / Other Proposals Considered / Requiring Outer Parentheses"
+        },
+        {
+          "quote": "But we think this might confuse readers into thinking def(A, B) -> C is a lambda, particularly because Javascript's function keyword is used in both named and anonymous functions.",
+          "source": "PEP 677 (rejected idea: Hybrid keyword-arrow Syntax)",
+          "section": "Rejected Alternatives / Other Proposals Considered / Hybrid keyword-arrow Syntax"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.248,
+      "examples": [
+        {
+          "quote": "It is debatable whether we are required to preserve backward compatibility of __args__ for async callable types like async (int) -> str.",
+          "source": "PEP 677 (rejected idea: Using the plain return type in __args__ for async types)",
+          "section": "Rejected Alternatives / Alternative Runtime Behaviors / Using the plain return type in ``__args__`` for async types"
+        },
+        {
+          "quote": "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially extension modules.",
+          "source": "PEP 484 (compat)",
+          "section": "Rejected Alternatives / Other backwards compatible conventions"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.208,
+      "examples": [
+        {
+          "quote": "- We believe it is more appropriate to encourage this in style guides, linters, and autoformatters than to bake it into the parser and throw syntax errors. - Moreover, if a type is complicated enough that readability is a concern we can always use type aliases, for example::",
+          "source": "PEP 677 (rejected idea: Requiring Outer Parentheses)",
+          "section": "Rejected Alternatives / Other Proposals Considered / Requiring Outer Parentheses"
+        },
+        {
+          "quote": "If we do not want to add new syntax for callable types, we could look at how to make the existing type easier to read.",
+          "source": "PEP 677 (rejected idea: Improving Usability of the Indexed Callable Type)",
+          "section": "Rejected Alternatives / Other Proposals Considered / Improving Usability of the Indexed Callable Type"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "ecosystem_impact",
+      "label": "Impact on libraries and tools",
+      "weight": 0.08,
+      "examples": [
+        {
+          "quote": "- It means we no would longer have to treat None | (int, str) -> bool as a syntax error. - Looking at typeshed today, optional callable arguments are very common because using None as a default value is a standard Python idiom.",
+          "source": "PEP 677 (rejected idea: Making -> bind tighter than |)",
+          "section": "Rejected Alternatives / Other Proposals Considered / Making ``->`` bind tighter than ``|``"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "runtime_semantics",
+      "label": "Runtime behavior / introspection",
+      "weight": 0.059,
+      "examples": [
+        {
+          "quote": "There is no particular interaction between this proposal and from __future__ import annotations - just like any other type annotation it will be unparsed to a string at module import, and typing.get_type_hints should correctly evaluate the resulting strings in cases where that is possible.",
+          "source": "PEP 677 (compat)",
+          "section": "Backward Compatibility"
+        },
+        {
+          "quote": "Tools that specifically rely on introspecting annotations at runtime (tools that parse Python files are obviously unaffected) that want to extract the annotations unevaluated and process them in some way are possibly in more trouble.",
+          "source": "PEP 827 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": []
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "foundation of PEP 612"
+    },
+    {
+      "pep": 483,
+      "title": "The Theory of Type Hints",
+      "why": "foundation of PEP 544 → PEP 612"
+    },
+    {
+      "pep": 544,
+      "title": "Protocols: Structural subtyping (static duck typing)",
+      "why": "foundation of PEP 612"
+    },
+    {
+      "pep": 612,
+      "title": "Parameter Specification Variables",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 677,
+      "title": "Callable Type Syntax",
+      "why": "closest prior proposal (read why it failed)"
+    },
+    {
+      "pep": 821,
+      "title": "Support for unpacking TypedDicts in Callable type hints",
+      "why": "closest prior proposal"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Guido van Rossum",
+      "roles": {
+        "sponsor": [
+          612,
+          677
+        ],
+        "delegate": [
+          612
+        ],
+        "author": [
+          484
+        ]
+      },
+      "last_active": 2021
+    },
+    {
+      "name": "Pradeep Kumar Srinivasan",
+      "roles": {
+        "author": [
+          677
+        ]
+      },
+      "last_active": 2021
+    },
+    {
+      "name": "Steven Troxler",
+      "roles": {
+        "author": [
+          677
+        ]
+      },
+      "last_active": 2021
+    },
+    {
+      "name": "Daniel Sperber",
+      "roles": {
+        "author": [
+          821
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Daniel W. Park",
+      "roles": {
+        "author": [
+          827
+        ]
+      },
+      "last_active": 2026
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 821, 2026) was discussed there",
+    "example_thread": "https://discuss.python.org/t/105952"
+  },
+  "area_track_record": {
+    "concepts": [
+      "Callable arrow syntax",
+      "Callable types"
+    ],
+    "accepted": 2,
+    "failed": 1,
+    "open": 2,
+    "peps": [
+      {
+        "pep": 484,
+        "status": "Final"
+      },
+      {
+        "pep": 612,
+        "status": "Final"
+      },
+      {
+        "pep": 677,
+        "status": "Rejected"
+      },
+      {
+        "pep": 821,
+        "status": "Draft"
+      },
+      {
+        "pep": 827,
+        "status": "Draft"
+      }
+    ]
+  }
+}

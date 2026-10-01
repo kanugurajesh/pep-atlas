@@ -1,0 +1,403 @@
+{
+  "input": {
+    "text": "Allow T? as a shorthand for Optional[T] in annotations, like Kotlin and TypeScript do.\n",
+    "concepts": [
+      {
+        "id": "optional_shorthand",
+        "label": "`X?` optional shorthand",
+        "matched": [
+          "T?"
+        ],
+        "specificity": 0.55
+      },
+      {
+        "id": "union",
+        "label": "Union types",
+        "matched": [
+          "Optional"
+        ],
+        "specificity": 0.32
+      }
+    ],
+    "intents": [
+      "new_syntax"
+    ],
+    "pep_mentions": []
+  },
+  "verdict": {
+    "label": "previously_rejected",
+    "confidence": "high",
+    "summary": "PEP 645 (Allow writing optional types as x?) proposed this and was withdrawn. A new attempt has to answer the reasons recorded in its decision.",
+    "basis": {
+      "pep": 645,
+      "score": 0.84,
+      "text_cosine": 0.258
+    },
+    "warnings": []
+  },
+  "closest_peps": [
+    {
+      "pep": 645,
+      "title": "Allow writing optional types as x?",
+      "status": "Withdrawn",
+      "year": 2020,
+      "score": 0.84,
+      "why": [
+        "proposes Union types",
+        "proposes `X?` optional shorthand",
+        "shared wording: optional, allow"
+      ],
+      "url": "https://peps.python.org/pep-0645/",
+      "superseded_by": [],
+      "decision": {
+        "outcome": "Withdrawn",
+        "rationale": "The notation T|None introduced by 604 to write Optional[T] is a fine alternative to T? and does not require new syntax. Using T? to mean T|None is also inconsistent with TypeScript where it roughly means NotRequired[T]. Such inconsistency would likely confuse folks coming from TypeScript to Python. The above represents the consensus of typing-sig and the sponsor of this PEP.",
+        "resolution": "https://mail.python.org/archives/list/typing-sig@python.org/message/E75SPV6DDHLEEFSA5MBN5HUOQWDMUQJ2/"
+      }
+    },
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "status": "Final",
+      "year": 2014,
+      "score": 0.233,
+      "why": [
+        "introduces Union types",
+        "shared wording: annotation"
+      ],
+      "url": "https://peps.python.org/pep-0484/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 604,
+      "title": "Allow writing union types as X | Y",
+      "status": "Final",
+      "year": 2019,
+      "score": 0.224,
+      "why": [
+        "extends Union types",
+        "shared wording: allow"
+      ],
+      "url": "https://peps.python.org/pep-0604/",
+      "superseded_by": [],
+      "decision": null
+    },
+    {
+      "pep": 727,
+      "title": "Documentation in Annotated Metadata",
+      "status": "Withdrawn",
+      "year": 2023,
+      "score": 0.181,
+      "why": [
+        "shared wording: shorthand, typescript, like"
+      ],
+      "url": "https://peps.python.org/pep-0727/",
+      "superseded_by": [],
+      "decision": {
+        "outcome": "Withdrawn",
+        "rationale": "The reception of this PEP was mostly negative, with concerns raised about verbosity and readability. As a result, this PEP has been withdrawn.",
+        "resolution": null
+      }
+    },
+    {
+      "pep": 835,
+      "title": "Shorthand syntax for Annotated type metadata",
+      "status": "Draft",
+      "year": 2026,
+      "score": 0.162,
+      "why": [
+        "mentions Union types",
+        "shared wording: shorthand, allow"
+      ],
+      "url": "https://peps.python.org/pep-0835/",
+      "superseded_by": [],
+      "decision": null
+    }
+  ],
+  "rejected_ideas": [
+    {
+      "idea": "Shorthand with Slices",
+      "pep": 727,
+      "section": "Rejected Ideas / Shorthand with Slices",
+      "year": 2023,
+      "score": 0.397,
+      "summary": "In the discussion, it was suggested to use a shorthand with slices:",
+      "reason": null,
+      "concerns": [
+        "Runtime behavior / introspection"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Change Optional to mean “optional item” in certain contexts instead of “nullable”",
+      "pep": 655,
+      "section": "Rejected Ideas / Change Optional to mean “optional item” in certain contexts instead of “nullable”",
+      "year": 2021,
+      "score": 0.359,
+      "summary": "Consider the use of a special flag on a TypedDict definition to alter the interpretation of Optional inside the TypedDict to mean “optional item” rather than its usual meaning of “nullable”:",
+      "reason": "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": [
+        {
+          "pep": 705,
+          "title": "TypedDict: Read-only items",
+          "status": "Final",
+          "confidence": 0.584
+        }
+      ]
+    },
+    {
+      "idea": "Why not use tool X?",
+      "pep": 675,
+      "section": "Rejected Alternatives / Why not use tool X?",
+      "year": 2021,
+      "score": 0.302,
+      "summary": "Tools to catch issues such as SQL injection seem to come in three flavors: AST based, function level analysis, and taint flow analysis.",
+      "reason": "The problem is that many perfectly safe SQL queries are dynamically built out of string literals, as shown in the `Motivation`_ section. To use these tools would require significantly restricting developers' ability to build SQL queries.",
+      "concerns": [
+        "Readability / teachability"
+      ],
+      "revisited_by": []
+    },
+    {
+      "idea": "Provide a special intersection type construct",
+      "pep": 544,
+      "section": "Rejected/Postponed Ideas / Provide a special intersection type construct",
+      "year": 2017,
+      "score": 0.284,
+      "summary": "There was an idea to allow Proto = All[Proto1, Proto2, ...] as a shorthand for::",
+      "reason": "However, it is not yet clear how popular/useful it will be and implementing this in type checkers for non-protocol classes could be difficult.",
+      "concerns": [],
+      "revisited_by": []
+    },
+    {
+      "idea": "Extended Syntax Supporting Named and Optional Arguments",
+      "pep": 677,
+      "section": "Rejected Alternatives / Extended Syntax Supporting Named and Optional Arguments",
+      "year": 2021,
+      "score": 0.264,
+      "summary": "Another alternative was for a compatible but more complex syntax that could express everything in this PEP but also named, optional, and variadic arguments. In this “extended” syntax proposal the following types would have been equivalent::",
+      "reason": "We decided against proposing it for the following reasons: - The implementation would have been more difficult, and usage stats demonstrate that fewer than 3% of use cases would benefit from any of the added features. - The group that debated these proposals was split down the middle about whether these changes are desirable: On the other hand, they could easily confuse users who have not read the full specification of callable type syntax. - We believe the simpler syntax proposed in this PEP, which introduces no new semantics and closely mimics syntax in other popular languages like Kotlin, S",
+      "concerns": [
+        "Readability / teachability",
+        "Cost of new syntax"
+      ],
+      "revisited_by": []
+    }
+  ],
+  "objections_to_prepare_for": [
+    {
+      "concern": "readability",
+      "label": "Readability / teachability",
+      "weight": 0.42,
+      "examples": [
+        {
+          "quote": "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag.",
+          "source": "PEP 655 (rejected idea: Change Optional to mean “optional item” in certain contexts instead of “nullable”)",
+          "section": "Rejected Ideas / Change Optional to mean “optional item” in certain contexts instead of “nullable”"
+        },
+        {
+          "quote": "These tools are powerful but involve considerable overhead in setting up the tool in CI, defining \"taint\" sinks and sources, and teaching developers how to use them.",
+          "source": "PEP 675 (rejected idea: Why not use tool X?)",
+          "section": "Rejected Alternatives / Why not use tool X?"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.221,
+      "examples": [
+        {
+          "quote": "We confirmed that the current proposal is forward-compatible with extended syntax by implementing a grammar and AST for this extended syntax on top of our reference implementation of this PEP's grammar.",
+          "source": "PEP 677 (rejected idea: Extended Syntax Supporting Named and Optional Arguments)",
+          "section": "Rejected Alternatives / Extended Syntax Supporting Named and Optional Arguments"
+        },
+        {
+          "quote": "The notation T|None introduced by 604 to write Optional[T] is a fine alternative to T? and does not require new syntax.",
+          "source": "PEP 645 (decision)",
+          "section": "PEP Withdrawal"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "backward_compat",
+      "label": "Backward compatibility",
+      "weight": 0.142,
+      "examples": [
+        {
+          "quote": "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially extension modules.",
+          "source": "PEP 484 (compat)",
+          "section": "Rejected Alternatives / Other backwards compatible conventions"
+        },
+        {
+          "quote": "? is currently unused in Python syntax, therefore this PEP is fully backwards compatible.",
+          "source": "PEP 645 (compat)",
+          "section": "Backwards Compatibility"
+        }
+      ],
+      "from_intent": [
+        "new_syntax"
+      ]
+    },
+    {
+      "concern": "ambiguity",
+      "label": "Ambiguity / inconsistency",
+      "weight": 0.131,
+      "examples": [
+        {
+          "quote": "Using T? to mean T|None is also inconsistent with TypeScript where it roughly means NotRequired[T].",
+          "source": "PEP 645 (decision)",
+          "section": "PEP Withdrawal"
+        }
+      ],
+      "from_intent": []
+    },
+    {
+      "concern": "runtime_semantics",
+      "label": "Runtime behavior / introspection",
+      "weight": 0.087,
+      "examples": [
+        {
+          "quote": "At runtime, ~typing.Annotated requires at least two arguments, and it requires the first argument to be type, it crashes if it is a slice.",
+          "source": "PEP 727 (rejected idea: Shorthand with Slices)",
+          "section": "Rejected Ideas / Shorthand with Slices"
+        }
+      ],
+      "from_intent": []
+    }
+  ],
+  "read_first": [
+    {
+      "pep": 3107,
+      "title": "Function Annotations",
+      "why": "foundation of PEP 563 → PEP 604"
+    },
+    {
+      "pep": 484,
+      "title": "Type Hints",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 526,
+      "title": "Syntax for Variable Annotations",
+      "why": "foundation of PEP 604"
+    },
+    {
+      "pep": 544,
+      "title": "Protocols: Structural subtyping (static duck typing)",
+      "why": "foundation of PEP 563 → PEP 604"
+    },
+    {
+      "pep": 563,
+      "title": "Postponed Evaluation of Annotations",
+      "why": "foundation of PEP 604"
+    },
+    {
+      "pep": 585,
+      "title": "Type Hinting Generics In Standard Collections",
+      "why": "foundation of PEP 604"
+    },
+    {
+      "pep": 604,
+      "title": "Allow writing union types as X | Y",
+      "why": "closest prior proposal"
+    },
+    {
+      "pep": 645,
+      "title": "Allow writing optional types as x?",
+      "why": "closest prior proposal (read why it failed)"
+    }
+  ],
+  "people_to_engage": [
+    {
+      "name": "Maggie Moss",
+      "roles": {
+        "author": [
+          604,
+          645
+        ]
+      },
+      "last_active": 2020
+    },
+    {
+      "name": "Guido van Rossum",
+      "roles": {
+        "sponsor": [
+          645
+        ],
+        "author": [
+          484
+        ],
+        "delegate": [
+          604
+        ]
+      },
+      "last_active": 2020
+    },
+    {
+      "name": "Till Varoquaux",
+      "roles": {
+        "author": [
+          835
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Daniel W. Park",
+      "roles": {
+        "author": [
+          827
+        ]
+      },
+      "last_active": 2026
+    },
+    {
+      "name": "Michael J. Sullivan",
+      "roles": {
+        "author": [
+          827
+        ]
+      },
+      "last_active": 2026
+    }
+  ],
+  "where_to_discuss": {
+    "venue": "discuss.python.org (Discourse)",
+    "basis": "most recent related PEP (PEP 835, 2026) was discussed there",
+    "example_thread": "https://discuss.python.org/t/pep-835-shorthand-syntax-for-annotated-type-metadata/107814"
+  },
+  "area_track_record": {
+    "concepts": [
+      "`X?` optional shorthand",
+      "Union types"
+    ],
+    "accepted": 2,
+    "failed": 1,
+    "open": 0,
+    "peps": [
+      {
+        "pep": 484,
+        "status": "Final"
+      },
+      {
+        "pep": 604,
+        "status": "Final"
+      },
+      {
+        "pep": 645,
+        "status": "Withdrawn"
+      }
+    ]
+  }
+}

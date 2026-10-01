@@ -1,0 +1,3 @@
+I'd like to propose a shorthand syntax for callable types: write (int, str) -> bool
+instead of Callable[[int, str], bool]. The nested brackets are hard to read,
+especially for higher-order functions and decorators.
