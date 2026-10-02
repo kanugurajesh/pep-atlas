@@ -392,9 +392,10 @@ class Engine:
                     "summary": "The input does not map onto any typing concept in the knowledge base and no PEP "
                                "is a close textual match. Either it is genuinely new ground or it is outside the "
                                "typing corpus (this system only knows typing PEPs)."}
-        if not prof.concepts:
+        if not prof.concepts and not prof.weights:
             # Shared words are not a precedent: "dictionary lookups ... string keys" once
             # came back as "already exists -> TypedDict". Name the nearest PEP, claim nothing.
+            # (An explicitly named PEP contributes weights and is a real anchor: "revive PEP 677".)
             tn = self.peps[peps[0]["id"]]
             return {"label": "outside_known_territory", "confidence": "low",
                     "summary": f"No typing concept was recognised, so no precedent is claimed. The closest PEP by "
@@ -432,9 +433,12 @@ class Engine:
                 msg += f" That ground was later revisited by PEP {self.g.nodes[revisit[0]['dst']]['number']}."
             return {"label": "previously_rejected_alternative", "confidence": "medium", "summary": msg,
                     "basis": {"idea": i["title"], "pep": i["pep"], "score": ideas[0]["score"]}}
-        if prof.concepts:
-            labels = ", ".join(lx.CONCEPT_BY_ID[c].label for c in sorted(prof.concepts))
-            near = f" Nearest prior work: PEP {tn['number']} ({tn['title']})." if tn else ""
+        if prof.concepts or prof.weights:
+            # Weights without matched concepts come from an explicitly named PEP. It anchors the
+            # search, but naming a PEP is not a claim of sameness ("extend PEP 484 to ..."), so it
+            # does not by itself turn into "already exists" / "previously rejected".
+            labels = ", ".join(lx.CONCEPT_BY_ID[c].label for c in sorted(prof.concepts or prof.weights))
+            near = f" Nearest prior work: PEP {tn['number']} ({tn['title']}, {tn['status']})." if tn else ""
             return {"label": "extends_existing_area", "confidence": "medium",
                     "summary": f"No PEP matches closely enough to call it the same proposal, but it builds on established concepts "
                                f"({labels}).{near} Expect to be measured against the decisions made there.",

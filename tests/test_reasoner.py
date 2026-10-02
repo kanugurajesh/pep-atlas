@@ -76,3 +76,12 @@ def test_wording_alone_claims_no_precedent(engine):
     r = engine.assess("Speed up dictionary lookups by caching hash values of string keys inside the interpreter.")
     assert r["verdict"]["label"] == "outside_known_territory"
     assert r["verdict"]["basis"]["wording_only"]
+
+
+def test_named_pep_is_an_anchor_without_concepts(engine):
+    # No lexicon concept in the text, but the user names the PEP: that is not "wording only",
+    # and the report must not say no typing concept was recognised.
+    r = engine.assess("I want to revive PEP 677 with a few changes")
+    assert r["verdict"]["label"] == "extends_existing_area", r["verdict"]
+    assert "PEP 677" in r["verdict"]["summary"]
+    assert r["closest_peps"][0]["pep"] == 677
