@@ -143,7 +143,8 @@ CONCEPTS: list[Concept] = [
     C("union_operator", "`X | Y` union syntax", "syntax", "Writing unions with the `|` operator.",
       phrases=[r"``\w+ \| \w+``", r"\bX \| Y\b", r"``\|`` operator", r"__or__", r"pipe operator", r"\| None\b"]),
     C("optional_shorthand", "`X?` optional shorthand", "syntax", "Postfix `?` meaning Optional.",
-      phrases=[r"``\w+\?``", r"\b(?:int|str|T|X|x)\?(?!\w)", r"``\?``", r"question mark",
+      # Bare `T?` must be followed by more code or words: "Why not use tool X?" is a question, not syntax.
+      phrases=[r"``\w+\?``", r"\b(?:int|str|T|X|x)\?(?=[ \t]*[\w\[\](),=:|])", r"``\?``", r"question mark",
                r"optional (?:type )?(?:operator|shorthand)"]),
     C("literal_types", "Literal types", "forms", "`Literal[...]` for specific values.",
       idents=["Literal"], phrases=[r"literal types?"], strict=True),

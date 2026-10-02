@@ -42,25 +42,26 @@ PEP 764 (Inline typed dictionaries) is an open draft on this topic; contributing
 - **Using dict or typing.Dict with a single type argument** (PEP 764 § Rejected Ideas / Using ``dict`` or ``typing.Dict`` with a single type argument, 2024), score 0.292
   - stated reason: "Allowing dict to be parametrized with a single type argument would require special casing from type checkers, as there is no way to express parametrization overloads. Having it used for a new typing feature would be confusing for users (and would require changes in code linters)."
   - concern types: Readability / teachability
-- **Rejected Ideas (PEP 821)** (PEP 821 § Rejected Ideas, 2026), score 0.286
-  - context: "- Combining Unpack[TD] with Concatenate. With such support, one could write Callable[Concatenate[int, Unpack[TD], P], R] which in turn would allow a keyword-only parameter between *args and kwargs, i.e. def func(*args: Any, a: int, kwargs: Any) -> R: ... which is currently not allowed per 612."
+- **Allowing Extra Items without Specifying the Type** (PEP 728 § Rejected Ideas / Allowing Extra Items without Specifying the Type, 2023), score 0.275
+  - stated reason: "Because it did not offer a way to specify the type of the extra items, the type checkers will need to assume that the type of the extra items is Any, which compromises type safety."
+  - concern types: Burden on type checkers, Type safety / soundness
 
 ## Objections to prepare for
 
-- **Backward compatibility**, weight 0.302
+- **Backward compatibility**, weight 0.259
   - "To retain backwards compatibility, type checkers should not infer a TypedDict type unless it is sufficiently clear that this is desired by the programmer." (PEP 589 (compat))
   - "Because extra_items is an opt-in feature, no existing codebase will break due to this change." (PEP 728 (compat))
-- **Readability / teachability**, weight 0.178
+- **Readability / teachability**, weight 0.153
   - "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag." (PEP 655 (rejected idea: Change Optional to mean “optional item” in certain contexts instead of “nullable”))
   - "Having it used for a new typing feature would be confusing for users (and would require changes in code linters)." (PEP 764 (rejected idea: Using dict or typing.Dict with a single type argument))
-- **Runtime behavior / introspection**, weight 0.165
+- **Runtime behavior / introspection**, weight 0.141
   - "TypedDict objects are regular dictionaries at runtime, and TypedDict cannot be used with other dictionary-like or mapping-like classes, including subclasses of dict." (PEP 589 (rejected idea: Rejected Alternatives (PEP 589)))
   - "Tools that specifically rely on introspecting annotations at runtime (tools that parse Python files are obviously unaffected) that want to extract the annotations unevaluated and process them in some way are possibly in more trouble." (PEP 827 (compat))
-- **Insufficient motivation / scope**, weight 0.095
+- **Insufficient motivation / scope**, weight 0.082
   - "- The types don't appear in an annotation context, so their evaluation will not be deferred." (PEP 728 (rejected idea: Support a New Syntax of Specifying Keys))
-- **Cost of new syntax**, weight 0.095
+- **Cost of new syntax**, weight 0.082
   - "By introducing a new syntax that allows specifying string keys, we could deprecate the functional syntax of defining TypedDict types and address the key conflict issues if we decide to reserve a special key to type extra items." (PEP 728 (rejected idea: Support a New Syntax of Specifying Keys))
-- **Impact on libraries and tools**, weight 0.089
+- **Impact on libraries and tools**, weight 0.076
   - "Such functionality can be provided by a third-party library using the typing_inspect [#typing_inspect]_ third-party module, for example." (PEP 589 (rejected idea: Rejected Alternatives (PEP 589)))
 
 ## Read first (in this order)

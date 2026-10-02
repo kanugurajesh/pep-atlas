@@ -1,6 +1,9 @@
 """Extraction rules checked against facts about typing history that are known
 independently of this code."""
 import json
+import os
+import subprocess
+import sys
 
 from pepatlas.extract import build_graph
 from tests.conftest import edge_types
@@ -75,3 +78,12 @@ def test_every_edge_has_provenance(graph):
 def test_build_is_deterministic(graph):
     again = build_graph()
     assert json.dumps(again.to_json(), sort_keys=True) == json.dumps(graph.to_json(), sort_keys=True)
+
+
+def test_build_is_deterministic_across_hash_seeds():
+    # Set iteration order changes with PYTHONHASHSEED, so a same-process rebuild
+    # cannot catch an ordering that depends on it (it once reordered PEP 484's focus list).
+    code = "import json; from pepatlas.extract import build_graph; print(json.dumps(build_graph().to_json()))"
+    outs = [subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True,
+                           env={**os.environ, "PYTHONHASHSEED": seed}).stdout for seed in ("0", "3")]
+    assert outs[0] == outs[1]

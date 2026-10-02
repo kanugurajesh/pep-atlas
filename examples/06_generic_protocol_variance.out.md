@@ -40,27 +40,20 @@ Kind of change: checker semantics
   - stated reason: "Once we'd decided that a variadic type variable should behave like a Tuple, we also considered TypeVar(bound=Tuple), which is similarly intuitive and accomplishes most what we wanted without requiring any new arguments to TypeVar. However, we realised this may constrain us in the future, if for example we want type…"
   - concern types: Readability / teachability
   - ↻ later revisited by **PEP 696** (Type Defaults for Type Parameters, Final)
-- **Marking required or potentially-missing keys with an operator** (PEP 655 § Rejected Ideas / Marking required or potentially-missing keys with an operator, 2021), score 0.407
-  - stated reason: "It was decided that it would be prudent to introduce long-form notation (i.e."
-  - concern types: Insufficient motivation / scope, Cost of new syntax
-- **Covariant subtyping of mutable attributes** (PEP 544 § Rejected/Postponed Ideas / Covariant subtyping of mutable attributes, 2017), score 0.359
-  - stated reason: "Rejected because covariant subtyping of mutable attributes is not safe. It was initially proposed to allow this for practical reasons, but it was subsequently rejected, since this may mask some hard to spot bugs."
 
 ## Objections to prepare for
 
-- **Readability / teachability**, weight 0.41
+- **Readability / teachability**, weight 0.539
   - "Variance is an advanced topic that many developers find confusing, so we want to eliminate the need to understand this concept for most Python developers." (PEP 695 (rejected idea: Explicit Variance))
   - "Once we'd decided that a variadic type variable should behave like a Tuple, we also considered TypeVar(bound=Tuple), which is similarly intuitive and accomplishes most what we wanted without requiring any new arguments to TypeVar." (PEP 646 (rejected idea: Construction of TypeVarTuple))
-- **Cost of new syntax**, weight 0.192
-  - "Such operators could be implemented on type via the __pos__, __neg__ and __invert__ special methods without modifying the grammar." (PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator))
-  - "Note that the use of the star operator in this context requires a grammar change, and is therefore available only in new versions of Python." (PEP 646 (compat))
-- **Backward compatibility**, weight 0.146
+- **Backward compatibility**, weight 0.192
   - "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially…" (PEP 484 (compat))
   - "This PEP is fully backwards compatible." (PEP 544 (compat))
-- **Insufficient motivation / scope**, weight 0.119
-  - "Future PEPs may reconsider introducing this or other short-form notation options." (PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator))
-- **Type safety / soundness**, weight 0.044 (typical for: checker semantics)
-- **Burden on type checkers**, weight 0.044 (typical for: checker semantics)
+- **Cost of new syntax**, weight 0.096
+  - "Note that the use of the star operator in this context requires a grammar change, and is therefore available only in new versions of Python." (PEP 646 (compat))
+- **Type safety / soundness**, weight 0.058 (typical for: checker semantics)
+- **Burden on type checkers**, weight 0.058 (typical for: checker semantics)
+- **Ambiguity / inconsistency**, weight 0.058 (typical for: checker semantics)
 
 ## Read first (in this order)
 

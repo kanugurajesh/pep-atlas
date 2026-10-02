@@ -176,14 +176,17 @@
       "revisited_by": []
     },
     {
-      "idea": "Rejected Ideas (PEP 821)",
-      "pep": 821,
-      "section": "Rejected Ideas",
-      "year": 2026,
-      "score": 0.286,
-      "summary": "- Combining Unpack[TD] with Concatenate. With such support, one could write Callable[Concatenate[int, Unpack[TD], P], R] which in turn would allow a keyword-only parameter between *args and kwargs, i.e. def func(*args: Any, a: int, kwargs: Any) -> R: ... which is currently not allowed per 612.",
-      "reason": null,
-      "concerns": [],
+      "idea": "Allowing Extra Items without Specifying the Type",
+      "pep": 728,
+      "section": "Rejected Ideas / Allowing Extra Items without Specifying the Type",
+      "year": 2023,
+      "score": 0.275,
+      "summary": "extra=True was originally proposed for defining a TypedDict that accepts extra items regardless of the type, like how total=True works::",
+      "reason": "Because it did not offer a way to specify the type of the extra items, the type checkers will need to assume that the type of the extra items is Any, which compromises type safety.",
+      "concerns": [
+        "Burden on type checkers",
+        "Type safety / soundness"
+      ],
       "revisited_by": []
     }
   ],
@@ -191,7 +194,7 @@
     {
       "concern": "backward_compat",
       "label": "Backward compatibility",
-      "weight": 0.302,
+      "weight": 0.259,
       "examples": [
         {
           "quote": "To retain backwards compatibility, type checkers should not infer a TypedDict type unless it is sufficiently clear that this is desired by the programmer.",
@@ -209,7 +212,7 @@
     {
       "concern": "readability",
       "label": "Readability / teachability",
-      "weight": 0.178,
+      "weight": 0.153,
       "examples": [
         {
           "quote": "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag.",
@@ -227,7 +230,7 @@
     {
       "concern": "runtime_semantics",
       "label": "Runtime behavior / introspection",
-      "weight": 0.165,
+      "weight": 0.141,
       "examples": [
         {
           "quote": "TypedDict objects are regular dictionaries at runtime, and TypedDict cannot be used with other dictionary-like or mapping-like classes, including subclasses of dict.",
@@ -245,7 +248,7 @@
     {
       "concern": "insufficient_motivation",
       "label": "Insufficient motivation / scope",
-      "weight": 0.095,
+      "weight": 0.082,
       "examples": [
         {
           "quote": "- The types don't appear in an annotation context, so their evaluation will not be deferred.",
@@ -258,7 +261,7 @@
     {
       "concern": "syntax_cost",
       "label": "Cost of new syntax",
-      "weight": 0.095,
+      "weight": 0.082,
       "examples": [
         {
           "quote": "By introducing a new syntax that allows specifying string keys, we could deprecate the functional syntax of defining TypedDict types and address the key conflict issues if we decide to reserve a special key to type extra items.",
@@ -271,7 +274,7 @@
     {
       "concern": "ecosystem_impact",
       "label": "Impact on libraries and tools",
-      "weight": 0.089,
+      "weight": 0.076,
       "examples": [
         {
           "quote": "Such functionality can be provided by a third-party library using the typing_inspect [#typing_inspect]_ third-party module, for example.",

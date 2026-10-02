@@ -2,6 +2,16 @@
 
 **Domain A (Language Evolution), focused on the typing PEPs.**
 
+> **Try it in 60 seconds** (Python 3.10+, offline, no API keys)
+> ```bash
+> pip install -r requirements.txt
+> python -m pepatlas assess "Allow T? as a shorthand for Optional[T] in annotations"   # verdict: previously rejected, with PEP 645's reason
+> python -m pepatlas explain "Why are there both TypeGuard and TypeIs?"                  # lineage of a concept, with the alternatives turned down
+> ```
+> Then open [`knowledge/graph.html`](knowledge/graph.html) in a browser and click any node to see its edges and the sentence each one came from.
+>
+> **Measured, not just demoed:** on a time-based hold-out, concept anchoring improves the rank of the first right PEP over plain text search (MRR 0.70 → 0.81). On 26 frozen, hand-labelled proposals, the expected PEP is among the first three cited in 18 of 20, and the verdict is exactly right in 14 of 26 ([eval/results.md](eval/results.md), failures analysed in [approach.md §5–6](approach.md#5-evaluation)). 39 tests, deterministic build.
+
 You describe a typing feature you're thinking of proposing, in plain English. PEP Atlas reasons over a knowledge graph built from 55 typing PEPs and tells you:
 
 - **whether it has been tried**: verdicts are *already exists*, *in progress*, *previously rejected*, *rejected as an alternative inside another PEP*, *builds on an existing area* and *outside known territory*
@@ -42,9 +52,9 @@ The knowledge state (`knowledge/`) is committed, so `assess` and `explain` work 
 | `python -m pepatlas explain "<question>"` | "Why does X work this way?" Shows the concept's lineage through PEPs and the alternatives turned down along the way. |
 | `python -m pepatlas inspect pep 604` | Shows a node and all its edges with provenance. Kinds: `pep`, `concept`, `person`, `idea`, `concern`, `id`. |
 | `python -m pepatlas build` | Rebuilds the whole knowledge state from `data/raw/` (about 10 s, deterministic). |
-| `python -m pepatlas eval` | Temporal hold-out evaluation, writes `eval/results.md`. |
+| `python -m pepatlas eval` | Temporal hold-out retrieval evaluation plus the verdict benchmark (`eval/verdict_cases.json`), writes `eval/results.md`. |
 | `python -m pepatlas fetch` | Re-downloads the PEP sources at the pinned commit (needs git and network access; only needed to refresh `data/raw/`). |
-| `python -m pytest` | 33 tests: parser, lexicon rules, extraction checked against known typing history, reasoning golden cases, build determinism. |
+| `python -m pytest` | 39 tests: parser, lexicon rules, extraction checked against known typing history, reasoning golden cases, output precision and grounding, benchmark case validity, build determinism (also across hash seeds). |
 
 Try the inputs in [`examples/`](examples/). Each `NN_*.txt` has its generated `.out.md` and `.out.json` next to it.
 
@@ -57,7 +67,7 @@ python -m pepatlas explain "Why are there both TypeGuard and TypeIs?"
 
 | File | What it is |
 |---|---|
-| [`knowledge/graph.json`](knowledge/graph.json) | **The** knowledge base: the schema, 494 nodes and 1,848 typed edges. Each edge has `source`, `section`, `evidence` and `confidence`. The reasoner reads only this file. |
+| [`knowledge/graph.json`](knowledge/graph.json) | **The** knowledge base: the schema, 494 nodes and 1,847 typed edges. Each edge has `source`, `section`, `evidence` and `confidence`. The reasoner reads only this file. |
 | [`knowledge/summary.md`](knowledge/summary.md) | A readable tour: concept lineages (who introduced, extended or proposed each concept), every PEP's focus and foundations, rejected ideas that were later revisited, and objection statistics. |
 | [`knowledge/graph.html`](knowledge/graph.html) | An interactive viewer. Open it in a browser, click any node, and see its attributes and every edge with its evidence quote. (vis-network loads from a CDN.) |
 | [`knowledge/schema.json`](knowledge/schema.json) | Node and edge types, with the rule that produces each edge type. |

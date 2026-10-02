@@ -96,7 +96,8 @@ Key decisions:
 **Quality audit (done by hand against known typing history):**
 - **`INTRODUCES`:** all 54 checked; 49 correct. Wrong or debatable: 526→runtime annotation access, 563→`TYPE_CHECKING` (really 484), 692→`Unpack` (really 646), 612→`**kwargs` typing, 747→type expressions. The pattern is that a PEP which *formalizes* an existing idea looks like it introduces it.
 - **`REVISITED_BY`:** all 18 checked; 11 correct (e.g. 484 "forward declarations" → 649; 612 "list variadics" → 646; 705 "preventing unspecified keys" → 728; 724 "TypeGuard with a second output type" → 742). The 7 wrong ones share a broad concept such as TypedDict without sharing the specific idea. These edges are presented as hints with a confidence value, never as facts. An earlier, looser version produced 34 edges with much lower precision; requiring the later PEP to cite the rejecting one removed most of the noise.
-- **Reproducibility:** a test checks that the build is deterministic, and a test checks that every edge has provenance.
+- **Reproducibility:** a test checks that the build is deterministic, and a test checks that every edge has provenance. The determinism test originally rebuilt in the same process, so it could not see an ordering that depends on Python's per-process hash seed. One existed: tied concepts in PEP 484's focus list came out in set order. Sorts now break ties by name, and a second test builds under two hash seeds (0 and 3) that are known to disagree without the fix.
+- **A lexicon false positive found through the output:** the bare `T?` pattern matched the English question "Why not use **tool X?**" in PEP 675, so a SQL-tooling idea was linked to the `X?` concept and appeared in the `T?` assessment. A bare `T?` now has to be followed by more code or words. That removed one `ABOUT` edge (1,848 → 1,847).
 
 ## 4. What happens when a new input arrives
 
@@ -110,6 +111,7 @@ The reasoner (`reasoner.py`) reads only `knowledge/graph.json`, never the raw fi
    - `concept_score` sums, over the input's concepts, specificity × relation strength (introduces/proposes 1.0, extends 0.8, mentions up to 0.3), divided by max(total weight, 0.6).
    - The 0.6 floor stops one broad concept from fully anchoring a match. Without it, every runtime question matched every runtime PEP.
    - Rejected ideas are scored the same way, through `ABOUT` edges weighted by whether the concept is in the idea's own heading.
+   - **Rejected ideas must be on topic to be shown.** When the input has concepts, an idea that shares none of them is kept only if its wording overlap is strong (cosine ≥ 0.25) *and* not carried by a single word (no word above 75% of the cosine). Ideas under half the best idea's score are dropped. Without these rules, the word "shorthand" alone (88% of the cosine) pulled PEP 727's slice syntax into the `T?` assessment, and its quotes appeared under "objections".
 3. **Expand.** From the anchors the reasoner walks:
    - `SUPERSEDED_BY` / `REPLACES` to find what is in force now
    - `HAS_DECISION` to fetch the recorded rationale
@@ -151,21 +153,38 @@ The set is small (18 cases), so differences of a few points are within noise. I 
 **Tried and reverted (evidence-driven):**
 - **Key-term vocabularies in retrieval.** Adding each PEP's top-150 TF-IDF terms to its retrieval document lowered MRR from 0.81 to 0.76. Reverted.
 - **A word-coverage check before "already exists".** I wanted to catch "same area, different mechanism", where the input's distinctive terms are absent from the matched PEP. It flagged generic words ("especially", "without") and missed the real signal ("default", which is common across the corpus). A noisy verdict signal is worse than none, so it is gone. See failure mode 1.
+- **A plain cosine floor for off-topic rejected ideas.** It cleaned the six examples, but a test with a shorter `T?` input still let PEP 727's slice idea through: on short inputs, one rare shared word gives a high cosine (0.31). I replaced it with the "strong *and* spread over several words" rule in §4.
 
-**Golden cases** (`tests/test_reasoner.py`): six hand-written proposals with the verdicts a typing practitioner would expect, plus the non-goal warning and grounding checks. All pass.
+**Golden cases** (`tests/test_reasoner.py`): six hand-written proposals with the verdicts a typing practitioner would expect, plus the non-goal warning, grounding checks, and checks that rejected ideas and objection quotes stay on topic. All pass. These cases and the six examples were used while tuning, so they are not evidence of accuracy. That is what the next benchmark is for.
+
+**Verdict benchmark** (`eval/verdict_cases.json`, results in `eval/results.md`):
+- **Inputs:** 26 hand-written proposals, about 4 per verdict, paraphrased in plain English with no PEP numbers. Each case states its source of truth (e.g. "PEP 695, Rejected Ideas: Angle Brackets"). One case (a strict TypeGuard) lists a second acceptable verdict, because typing history supports both.
+- **Disjoint and frozen:** the cases avoid the golden tests and examples. They were written after the idea-filter thresholds were frozen and before the system was run on them. The numbers below are the **first run**; nothing was tuned against them.
+
+| Metric | Score |
+|---|---|
+| Verdict exactly right | 14/26 (54%); chance over 6 labels ≈ 17% |
+| Right or the listed acceptable alternative | 15/26 (58%) |
+| Expected PEP is the first one cited | 14/20 |
+| Expected PEP among the first three cited | **18/20** |
+
+How to read this: **retrieval is strong, and the verdict decision is the weak step.** The right PEP is almost always in front of the user, but the single-label decision on top of it is right only about half the time. The failures fall into four patterns, analysed in §6 (items 6–8 and 4). They point at specific rules rather than at the model as a whole, which is what makes them fixable.
 
 ## 6. Known limitations (honestly)
 
 1. **Similar is not the same.** "Let TypedDict items declare *default values*" returns *already exists → PEP 655*. PEP 655 covers the vocabulary (NotRequired, missing keys) but not defaults; PEP 589 actually lists default values among things it does not support. The verdict text tells the user to check the specific mechanism, and the output surfaces 589. Telling *mechanism* apart from *area* needs either finer concepts or a semantic model (§7). See `examples/05_typeddict_defaults.out.md`.
 2. **Verdicts are only as precise as the best single anchor.** For "infer variance on Protocols" (`examples/06`), the verdict cites PEP 544's rejected idea. The more useful fact, that PEP 695 rejected *explicit* variance because "variance can generally be inferred", is the second hit rather than the headline.
 3. **Some decisions happen off-page.** PEP 677's rejection rationale lives in a python-dev post, not in the PEP. The report says so and links the resolution, but cannot summarize it.
-4. **Lexicon recall.** Paraphrases the lexicon doesn't list ("TypedDict inline" was missing until a test caught it) fall back to wording similarity. The golden tests are the safety net.
+4. **Lexicon recall.** Paraphrases the lexicon doesn't list ("TypedDict inline" was missing until a test caught it) fall back to wording similarity. The verdict benchmark measures this: 4 of the 12 misses recognised **no concept at all** in plain-English descriptions of well-known features. Examples are "returns an instance of whatever class it was called on" (Self), "the parameter list of the function it wraps" (ParamSpec) and "explicit type arguments in square brackets" (PEP 718).
 5. **The concern classifier is cue-based.** "Readability" is the most frequent concern partly because its cues ("confusing", "learn") are common words. It suits ranking and quoting, not statistics.
+6. **Wording alone can claim "already exists".** When no concept is recognised, the verdict rests on TF-IDF alone, and a strong word overlap can cross the threshold. "Speed up dictionary lookups by caching hashes of string keys" was answered *already exists → PEP 589 (TypedDict)*. A rule saying "no concept → never claim an exact precedent" is the obvious fix. I have not applied it, because the benchmark is frozen and it would be tuned on the case it fixes. It goes into the next round with new cases.
+7. **An accepted PEP pre-empts its own rejected alternatives.** "Make `isinstance(x, list[int])` check elements" matches PEP 585 strongly, so the verdict says *already exists*, even though the specific mechanism is one of 585's rejected alternatives. The same happens with "make every class a protocol" (PEP 544). The decision rule checks PEP matches before idea matches. It should prefer the idea when the idea is a strong match *and* lives inside the matched PEP.
+8. **Correct anchor, cautious verdict.** For TypeIs (PEP 742), explicit variance (PEP 695) and keyword indexing (PEP 637), the right PEP is cited first or second, but the score sits under the strong-match threshold (e.g. 0.57 vs 0.62), so the verdict falls back to *builds on an existing area*. The fallback is safe, since it never claims a false precedent, but it under-claims.
 
 ## 7. What I would build next, and why
 
 1. **Ingest the Resolution threads and Discourse discussions** linked from the headers (35 resolution links, 48 discussion links). This closes limitation 3, and it is where *who objected and why* lives: Person -RAISED-> Concern edges with real attribution. It's the highest-value addition.
 2. **A concept hierarchy and finer mechanisms** (e.g. TypedDict → {totality, read-only, extra items, defaults}). This attacks limitation 1 directly. Concepts become specific enough that "same area, different mechanism" is visible in the graph rather than guessed from words.
-3. **An expert-labeled verdict benchmark** (30–50 proposals sampled from typing-sig / Discourse "Ideas" threads, labeled with what actually happened). Today the reasoning is validated by retrieval recall and six golden cases. Verdicts deserve their own precision numbers.
+3. **Fix the verdict rule using the benchmark's failure patterns, on a fresh test set.** The first benchmark (§5) shows the decision step, not retrieval, is the weak link, and §6 items 6–8 name the specific rules. I would fix them, then grow the case set with 30–50 proposals sampled from real typing-sig / Discourse "Ideas" threads, labelled with what actually happened. The current 26 cases would then become the dev set. Reporting fixes on the cases that motivated them would overstate the gain.
 4. **The CPython `typing` module history** (`Lib/typing.py` commits, typing_extensions releases). Adds an "implemented in version X / runtime behavior changed in Y" layer, useful for the *why does Python behave like this* scenario.
 5. **An optional LLM layer on the output side only:** turning the already-grounded JSON briefing into prose, constrained to cite edge evidence. Extraction stays rule-based. The graph remains the source of truth, and the model never decides what is known.

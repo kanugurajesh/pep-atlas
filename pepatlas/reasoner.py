@@ -36,6 +36,11 @@ STRONG_MATCH = 0.62             # PEP score at which we claim "this has been pro
 STRONG_TEXT = 0.22              # ...and wording must also overlap at least this much,
 STRONG_CONCEPT = 0.80           # ...or the concepts must match almost completely
 IDEA_MATCH = 0.55
+IDEA_MIN_SCORE = 0.2
+IDEA_OFF_CONCEPT_TEXT = 0.25    # an idea sharing none of the input's concepts needs strong wording overlap,
+IDEA_MAX_TERM_SHARE = 0.75      # ...not carried by one word: "shorthand" alone (88% of the cosine) pulled in
+                                # PEP 727's slice syntax for `T?`
+IDEA_RELATIVE_FLOOR = 0.5       # drop ideas scoring under half the best one; they read as noise beside it
 NON_GOAL_MATCH = 0.35
 PROPAGATION = 0.25              # share of a seed PEP's score passed to the PEPs it builds on
 MIN_EVIDENCE = 0.6              # concept weight needed for a full concept score: one broad concept
@@ -161,12 +166,23 @@ class Engine:
             cos = self.idea_index.similarity(qvec, i)
             text = min(1.0, cos / IDEA_TEXT_SATURATION)
             score = 0.45 * concept + 0.55 * text if prof.weights else text
-            if score < 0.2:
+            shared = sorted(set(prof.weights) & set(about))
+            if score < IDEA_MIN_SCORE or (prof.weights and not shared and not self._broad_wording_match(qvec, i, cos)):
                 continue
             out.append({"id": i, "score": round(score, 3), "text_cosine": round(cos, 3),
-                        "shared_concepts": sorted(set(prof.weights) & set(about))})
+                        "shared_concepts": shared})
         out.sort(key=lambda r: (-r["score"], r["id"]))
+        if out:
+            out = [r for r in out if r["score"] >= IDEA_RELATIVE_FLOOR * out[0]["score"]]
         return out[:k]
+
+    def _broad_wording_match(self, qvec: dict[str, float], idea_id: str, cos: float) -> bool:
+        """Wording alone is trusted only if it is strong and spread over several words."""
+        if cos < IDEA_OFF_CONCEPT_TEXT:
+            return False
+        dv = self.idea_index.vecs.get(idea_id, {})
+        top_term = max((x * dv[t] for t, x in qvec.items() if t in dv), default=0.0)
+        return top_term <= IDEA_MAX_TERM_SHARE * cos
 
     # ------------------------------------------------------------------ helpers
     def current_version(self, pep_id: str) -> list[str]:

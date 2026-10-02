@@ -167,38 +167,13 @@
           "confidence": 0.586
         }
       ]
-    },
-    {
-      "idea": "Marking required or potentially-missing keys with an operator",
-      "pep": 655,
-      "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator",
-      "year": 2021,
-      "score": 0.407,
-      "summary": "We could use unary + as shorthand to mark a required key, unary - to mark a potentially-missing key, or unary ~ to mark a key with opposite-of-normal totality:",
-      "reason": "It was decided that it would be prudent to introduce long-form notation (i.e.",
-      "concerns": [
-        "Insufficient motivation / scope",
-        "Cost of new syntax"
-      ],
-      "revisited_by": []
-    },
-    {
-      "idea": "Covariant subtyping of mutable attributes",
-      "pep": 544,
-      "section": "Rejected/Postponed Ideas / Covariant subtyping of mutable attributes",
-      "year": 2017,
-      "score": 0.359,
-      "summary": "Rejected because covariant subtyping of mutable attributes is not safe. Consider this example::",
-      "reason": "Rejected because covariant subtyping of mutable attributes is not safe. It was initially proposed to allow this for practical reasons, but it was subsequently rejected, since this may mask some hard to spot bugs.",
-      "concerns": [],
-      "revisited_by": []
     }
   ],
   "objections_to_prepare_for": [
     {
       "concern": "readability",
       "label": "Readability / teachability",
-      "weight": 0.41,
+      "weight": 0.539,
       "examples": [
         {
           "quote": "Variance is an advanced topic that many developers find confusing, so we want to eliminate the need to understand this concept for most Python developers.",
@@ -214,27 +189,9 @@
       "from_intent": []
     },
     {
-      "concern": "syntax_cost",
-      "label": "Cost of new syntax",
-      "weight": 0.192,
-      "examples": [
-        {
-          "quote": "Such operators could be implemented on type via the __pos__, __neg__ and __invert__ special methods without modifying the grammar.",
-          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
-          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
-        },
-        {
-          "quote": "Note that the use of the star operator in this context requires a grammar change, and is therefore available only in new versions of Python.",
-          "source": "PEP 646 (compat)",
-          "section": "Specification / Type Variable Tuples / ``Unpack`` for Backwards Compatibility"
-        }
-      ],
-      "from_intent": []
-    },
-    {
       "concern": "backward_compat",
       "label": "Backward compatibility",
-      "weight": 0.146,
+      "weight": 0.192,
       "examples": [
         {
           "quote": "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially extension modules.",
@@ -250,14 +207,14 @@
       "from_intent": []
     },
     {
-      "concern": "insufficient_motivation",
-      "label": "Insufficient motivation / scope",
-      "weight": 0.119,
+      "concern": "syntax_cost",
+      "label": "Cost of new syntax",
+      "weight": 0.096,
       "examples": [
         {
-          "quote": "Future PEPs may reconsider introducing this or other short-form notation options.",
-          "source": "PEP 655 (rejected idea: Marking required or potentially-missing keys with an operator)",
-          "section": "Rejected Ideas / Marking required or potentially-missing keys with an operator"
+          "quote": "Note that the use of the star operator in this context requires a grammar change, and is therefore available only in new versions of Python.",
+          "source": "PEP 646 (compat)",
+          "section": "Specification / Type Variable Tuples / ``Unpack`` for Backwards Compatibility"
         }
       ],
       "from_intent": []
@@ -265,7 +222,7 @@
     {
       "concern": "soundness",
       "label": "Type safety / soundness",
-      "weight": 0.044,
+      "weight": 0.058,
       "examples": [],
       "from_intent": [
         "checker_semantics"
@@ -274,7 +231,16 @@
     {
       "concern": "checker_complexity",
       "label": "Burden on type checkers",
-      "weight": 0.044,
+      "weight": 0.058,
+      "examples": [],
+      "from_intent": [
+        "checker_semantics"
+      ]
+    },
+    {
+      "concern": "ambiguity",
+      "label": "Ambiguity / inconsistency",
+      "weight": 0.058,
       "examples": [],
       "from_intent": [
         "checker_semantics"

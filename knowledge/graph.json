@@ -75,7 +75,7 @@
    "Venue": 4
   },
   "edges": {
-   "ABOUT": 237,
+   "ABOUT": 236,
    "AUTHORED_BY": 87,
    "BUILDS_ON": 115,
    "CONSIDERED": 219,
@@ -652,7 +652,7 @@
    "lexicon_idents": [],
    "lexicon_phrases": [
     "``\\w+\\?``",
-    "\\b(?:int|str|T|X|x)\\?(?!\\w)",
+    "\\b(?:int|str|T|X|x)\\?(?=[ \\t]*[\\w\\[\\](),=:|])",
     "``\\?``",
     "question mark",
     "optional (?:type )?(?:operator|shorthand)"
@@ -1918,9 +1918,9 @@
     "type_of_class",
     "bounds_constraints",
     "variance",
-    "overload",
-    "newtype",
     "never_noreturn",
+    "newtype",
+    "overload",
     "type_aliases",
     "function_annotations",
     "forward_references"
@@ -8314,15 +8314,6 @@
    "source": "pep:675",
    "section": "Rejected Alternatives / Why not use tool X?",
    "weight": 5
-  },
-  {
-   "src": "idea:675:why-not-use-tool-x",
-   "dst": "concept:optional_shorthand",
-   "type": "ABOUT",
-   "confidence": 0.8,
-   "source": "pep:675",
-   "section": "Rejected Alternatives / Why not use tool X?",
-   "weight": 4
   },
   {
    "src": "idea:677:extended-syntax-supporting-named-and-optional-arguments",
@@ -17319,7 +17310,7 @@
    "type": "MENTIONS",
    "confidence": 0.6,
    "source": "pep:645",
-   "weight": 0.112,
+   "weight": 0.155,
    "mentions": 4,
    "rule": "lexicon mentions"
   },
@@ -21042,7 +21033,7 @@
    "confidence": 0.85,
    "source": "pep:645",
    "weight": 1.0,
-   "mentions": 24,
+   "mentions": 20,
    "rule": "focus: title/abstract/heading-weighted share >= 0.35"
   },
   {
@@ -21051,7 +21042,7 @@
    "type": "PROPOSES",
    "confidence": 0.85,
    "source": "pep:645",
-   "weight": 0.573,
+   "weight": 0.795,
    "mentions": 15,
    "rule": "focus: title/abstract/heading-weighted share >= 0.35"
   },

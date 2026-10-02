@@ -32,37 +32,34 @@ Kind of change: new syntax
 
 ## Similar ideas that were turned down
 
-- **Shorthand with Slices** (PEP 727 § Rejected Ideas / Shorthand with Slices, 2023), score 0.397
-  - context: "In the discussion, it was suggested to use a shorthand with slices:"
-  - concern types: Runtime behavior / introspection
 - **Change Optional to mean “optional item” in certain contexts instead of “nullable”** (PEP 655 § Rejected Ideas / Change Optional to mean “optional item” in certain contexts instead of “nullable”, 2021), score 0.359
   - stated reason: "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag."
   - concern types: Readability / teachability
   - ↻ later revisited by **PEP 705** (TypedDict: Read-only items, Final)
-- **Why not use tool X?** (PEP 675 § Rejected Alternatives / Why not use tool X?, 2021), score 0.302
-  - stated reason: "The problem is that many perfectly safe SQL queries are dynamically built out of string literals, as shown in the `Motivation`_ section. To use these tools would require significantly restricting developers' ability to build SQL queries."
-  - concern types: Readability / teachability
-- **Provide a special intersection type construct** (PEP 544 § Rejected/Postponed Ideas / Provide a special intersection type construct, 2017), score 0.284
-  - stated reason: "However, it is not yet clear how popular/useful it will be and implementing this in type checkers for non-protocol classes could be difficult."
-- **Extended Syntax Supporting Named and Optional Arguments** (PEP 677 § Rejected Alternatives / Extended Syntax Supporting Named and Optional Arguments, 2021), score 0.264
-  - stated reason: "We decided against proposing it for the following reasons: - The implementation would have been more difficult, and usage stats demonstrate that fewer than 3% of use cases would benefit from any of the added features. - The group that debated these proposals was split down the middle about whether these changes are…"
-  - concern types: Readability / teachability, Cost of new syntax
+- **Special syntax around the key of a TypedDict item** (PEP 655 § Rejected Ideas / Special syntax around the *key* of a TypedDict item, 2021), score 0.251
+  - stated reason: "This notation would require Python grammar changes and it is not believed that marking TypedDict items as required or potentially-missing would meet the high bar required to make such grammar changes. This notation causes Optional[] to take on different meanings depending on where it is positioned, which is…"
+  - concern types: Ambiguity / inconsistency, Readability / teachability, Cost of new syntax
+  - ↻ later revisited by **PEP 705** (TypedDict: Read-only items, Final)
+- **Misalignment with how unions are subdivided** (PEP 655 § Rejected Ideas / Marking absence of a value with a special constant / Misalignment with how unions are subdivided, 2021), score 0.212
+  - stated reason: "However if we were to allow Union[..., Missing] you’d either have to eliminate the Missing case with hasattr for object attributes: or a check against locals() for local variables:"
+  - concern types: Ambiguity / inconsistency, Runtime behavior / introspection
 
 ## Objections to prepare for
 
-- **Readability / teachability**, weight 0.42 (typical for: new syntax)
+- **Readability / teachability**, weight 0.355 (typical for: new syntax)
   - "This would add more confusion for users because it would mean that in some contexts the meaning of Optional[] is different than in other contexts, and it would be easy to overlook the flag." (PEP 655 (rejected idea: Change Optional to mean “optional item” in certain contexts instead of “nullable”))
-  - "These tools are powerful but involve considerable overhead in setting up the tool in CI, defining "taint" sinks and sources, and teaching developers how to use them." (PEP 675 (rejected idea: Why not use tool X?))
+  - "This notation causes Optional[] to take on different meanings depending on where it is positioned, which is inconsistent and confusing." (PEP 655 (rejected idea: Special syntax around the key of a TypedDict item))
+- **Ambiguity / inconsistency**, weight 0.234
+  - "This notation causes Optional[] to take on different meanings depending on where it is positioned, which is inconsistent and confusing." (PEP 655 (rejected idea: Special syntax around the key of a TypedDict item))
+  - "Weird and inconsistent." (PEP 655 (rejected idea: Misalignment with how unions are subdivided))
 - **Cost of new syntax**, weight 0.221 (typical for: new syntax)
-  - "We confirmed that the current proposal is forward-compatible with extended syntax by implementing a grammar and AST for this extended syntax on top of our reference implementation of this PEP's grammar." (PEP 677 (rejected idea: Extended Syntax Supporting Named and Optional Arguments))
+  - "This notation would require Python grammar changes and it is not believed that marking TypedDict items as required or potentially-missing would meet the high bar required to make such grammar changes." (PEP 655 (rejected idea: Special syntax around the key of a TypedDict item))
   - "The notation T|None introduced by 604 to write Optional[T] is a fine alternative to T? and does not require new syntax." (PEP 645 (decision))
-- **Backward compatibility**, weight 0.142 (typical for: new syntax)
+- **Backward compatibility**, weight 0.143 (typical for: new syntax)
   - "We do want stub files, but they are primarily useful for adding type hints to existing code that doesn't lend itself to adding type hints, e.g. 3rd party packages, code that needs to support both Python 2 and Python 3, and especially…" (PEP 484 (compat))
   - "? is currently unused in Python syntax, therefore this PEP is fully backwards compatible." (PEP 645 (compat))
-- **Ambiguity / inconsistency**, weight 0.131
-  - "Using T? to mean T|None is also inconsistent with TypeScript where it roughly means NotRequired[T]." (PEP 645 (decision))
-- **Runtime behavior / introspection**, weight 0.087
-  - "At runtime, ~typing.Annotated requires at least two arguments, and it requires the first argument to be type, it crashes if it is a slice." (PEP 727 (rejected idea: Shorthand with Slices))
+- **Runtime behavior / introspection**, weight 0.047
+  - "Furthermore the use of Union[..., Missing] doesn’t align with the usual ways that union values are broken down: Normally you can eliminate components of a union type using isinstance checks:" (PEP 655 (rejected idea: Misalignment with how unions are subdivided))
 
 ## Read first (in this order)
 

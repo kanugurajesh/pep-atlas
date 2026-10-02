@@ -50,3 +50,22 @@ def test_explain_follows_supersession(engine):
     r = engine.explain("Why wasn't from __future__ import annotations made the default?")
     peps = [t["pep"] for t in r["timeline"]]
     assert peps.index(563) < peps.index(649) < peps.index(749)
+
+
+def test_rejected_ideas_are_on_topic(engine):
+    r = engine.assess("Allow T? as a shorthand for Optional[T] in annotations")
+    peps = {i["pep"] for i in r["rejected_ideas"]}
+    # PEP 675's "Why not use tool X?" (SQL tooling) once matched the `X?` concept,
+    # and PEP 727's slice shorthand / PEP 544's intersections got in on shared words.
+    assert not peps & {675, 727, 544}, r["rejected_ideas"]
+
+
+def test_objection_quotes_come_from_listed_sources(engine):
+    for text in ("Allow T? as a shorthand for Optional[T] in annotations",
+                 "Python should enforce type hints at runtime and raise TypeError on wrong argument types"):
+        r = engine.assess(text)
+        ideas = {f"PEP {i['pep']} (rejected idea: {i['idea']})" for i in r["rejected_ideas"]}
+        area = {i["pep"] for i in r["area_track_record"]["peps"]}
+        for o in r["objections_to_prepare_for"]:
+            for ex in o["examples"]:
+                assert ex["source"] in ideas or int(ex["source"].split()[1]) in area, ex

@@ -10,10 +10,15 @@ Protocol
   4. Metrics: recall@5, recall@10, MRR of the first gold hit.
 
 Ablations isolate what the graph contributes over plain text retrieval.
+
+A second, separate check scores the *verdicts* on the hand-labelled proposals
+in eval/verdict_cases.json, using the full graph.
 """
 from __future__ import annotations
 
+import json
 import re
+from collections import Counter
 from statistics import mean
 
 from .config import ROOT
@@ -22,6 +27,10 @@ from .parse import paragraphs
 from .reasoner import Engine
 
 CUTOFF = "2023-01-01"
+VERDICT_CASES = ROOT / "eval" / "verdict_cases.json"
+LABELS = ["already_exists", "in_progress", "previously_rejected", "previously_rejected_alternative",
+          "extends_existing_area", "outside_known_territory"]
+TRIED = {"previously_rejected", "previously_rejected_alternative"}      # both mean "this was tried and turned down"
 
 VARIANTS = {
     "text only (TF-IDF baseline)": dict(w_concept=0.0, w_text=1.0, spread=0.0),
@@ -86,9 +95,57 @@ def run(write: bool = True) -> str:
         g = ", ".join(str(full.nodes[x]["number"]) for x in sorted(gold, key=lambda x: full.nodes[x]["number"]))
         hits = ", ".join(str(full.nodes[x]["number"]) for x in top if x in gold) or "–"
         L.append(f"| {num}: {full.nodes[f'pep:{num}']['title']} | {g} | {hits} | {rec:.2f} |")
+    L += ["", *verdict_section(Engine(full))]
     md = "\n".join(L) + "\n"
     if write:
         out = ROOT / "eval" / "results.md"
         out.parent.mkdir(exist_ok=True)
         out.write_text(md, encoding="utf-8")
     return md
+
+
+def load_verdict_cases() -> list[dict]:
+    return json.loads(VERDICT_CASES.read_text(encoding="utf-8"))["cases"]
+
+
+def verdict_section(engine: Engine) -> list[str]:
+    cases = load_verdict_cases()
+    rows, confusion = [], Counter()
+    strict = lenient = tried = pep_cases = pep_top1 = pep_top3 = 0
+    for c in cases:
+        r = engine.assess(c["text"])
+        got, want = r["verdict"]["label"], c["expected_label"]
+        ok = got == want
+        accepted = ok or got in c.get("also_acceptable", [])
+        strict += ok
+        lenient += accepted
+        tried += ok or (got in TRIED and want in TRIED)
+        confusion[want, got] += 1
+        # The PEP the verdict rests on comes first, then the closest PEPs.
+        cited = [r["verdict"].get("basis", {}).get("pep")] + [p["pep"] for p in r["closest_peps"]]
+        cited = [p for i, p in enumerate(cited) if p and p not in cited[:i]]
+        if c.get("expected_pep"):
+            pep_cases += 1
+            pep_top1 += cited[:1] == [c["expected_pep"]]
+            pep_top3 += c["expected_pep"] in cited[:3]
+        rows.append(f"| {c['id']} | {want} | {got} | {'yes' if ok else ('acceptable' if accepted else 'no')} "
+                    f"| {c.get('expected_pep') or '–'} | {', '.join(map(str, cited[:3])) or '–'} |")
+    n = len(cases)
+    short = {l: "".join(w[0] for w in l.split("_")) for l in LABELS}
+    L = ["# Evaluation: verdict accuracy", "",
+         f"{n} hand-labelled proposals in `eval/verdict_cases.json`, written and frozen before the system was run "
+         "on them, and disjoint from the golden tests and examples used for tuning. Full graph.", "",
+         "| Metric | Score |", "|---|---|",
+         f"| Verdict exactly right | {strict}/{n} ({strict / n:.0%}) |",
+         f"| Right or a listed acceptable alternative | {lenient}/{n} ({lenient / n:.0%}) |",
+         f"| Right, counting both kinds of rejection as one (\"was tried\") | {tried}/{n} ({tried / n:.0%}) |",
+         f"| Expected PEP is the first one cited | {pep_top1}/{pep_cases} |",
+         f"| Expected PEP among the first three cited | {pep_top3}/{pep_cases} |", "",
+         "## Confusion matrix (rows: expected, columns: system)", "",
+         "| expected → got | " + " | ".join(short[l] for l in LABELS) + " |",
+         "|---|" + "---|" * len(LABELS)]
+    L += [f"| {l} | " + " | ".join(str(confusion[l, g] or "·") for g in LABELS) + " |" for l in LABELS]
+    L += ["", "Abbreviations: " + ", ".join(f"{short[l]} = {l}" for l in LABELS) + ".", "",
+          "## Per case", "", "| Case | Expected | Got | Correct | Expected PEP | PEPs cited first |",
+          "|---|---|---|---|---|---|", *rows]
+    return L

@@ -257,14 +257,14 @@ class Builder:
             top = max(scores.values())
             in_title = set(lx.count_concepts(d.headers.get("Title", "")))
             focus = sorted((c for c, w in scores.items() if w >= FOCUS_SHARE * top and w >= 6),
-                           key=lambda c: -scores[c])[:MAX_FOCUS]
+                           key=lambda c: (-scores[c], c))[:MAX_FOCUS]
             # Whatever the title names is always a focus, whatever the counts say.
             focus += sorted(in_title - set(focus))
             if len(self.headed[d.number]) >= UMBRELLA_HEADINGS:
                 # Umbrella PEP (in practice: 484). It defines a whole vocabulary
                 # with one section per construct, so every concept that has its
                 # own heading is a focus, not just the top few by count.
-                focus = sorted(set(focus) | self.headed[d.number], key=lambda c: -scores[c])
+                focus = sorted(set(focus) | self.headed[d.number], key=lambda c: (-scores[c], c))
             self.focus[d.number] = focus
             node["focus_concepts"] = focus
             for cid, w in sorted(scores.items()):

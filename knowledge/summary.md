@@ -20,7 +20,7 @@ Source: python/peps @ f92659f44685d6ac9be4be6289ea9c8bba907466
 
 | Edge type | Count | Rule |
 |---|---|---|
-| ABOUT | 237 | Lexicon match in the idea's heading/text |
+| ABOUT | 236 | Lexicon match in the idea's heading/text |
 | AUTHORED_BY | 87 | Author header |
 | BUILDS_ON | 115 | Reference to an earlier accepted PEP from abstract/motivation/specification |
 | CONSIDERED | 219 | Sub-section of a rejected/alternatives section |
@@ -112,7 +112,7 @@ For each concept: which PEP introduced it, which extended it, and which proposal
 | Keyword arguments in indexing | – | – | 637 | 0 |
 | Type parameter syntax | 695 | – | 718 | 0 |
 | `X | Y` union syntax | 604 | – | – | 3 |
-| `X?` optional shorthand | – | – | 645 | 1 |
+| `X?` optional shorthand | – | – | 645 | 0 |
 
 ## PEPs in the corpus
 
@@ -120,7 +120,7 @@ For each concept: which PEP introduced it, which extended it, and which proposal
 |---|---|---|---|---|---|---|
 | 482 | Literature Overview for Type Hints | Final | 2015 | – | 484 | 0 |
 | 483 | The Theory of Type Hints | Final | 2014 | generic_classes, typevar, gradual_typing, union | 484, 3107 | 0 |
-| 484 | Type Hints | Final | 2014 | typevar, generic_classes, type_comments, gradual_typing, stub_files, union, callable_types, type_of_class, bounds_constraints, variance, overload, newtype, never_noreturn, type_aliases, function_annotations, forward_references | – | 7 |
+| 484 | Type Hints | Final | 2014 | typevar, generic_classes, type_comments, gradual_typing, stub_files, union, callable_types, type_of_class, bounds_constraints, variance, never_noreturn, newtype, overload, type_aliases, function_annotations, forward_references | – | 7 |
 | 526 | Syntax for Variable Annotations | Final | 2016 | variable_annotations, type_comments, classvar, annotations_runtime | 484 | 2 |
 | 544 | Protocols: Structural subtyping (static duck typing) | Final | 2017 | protocols | 483, 484 | 16 |
 | 557 | Data Classes | Final | 2017 | dataclasses | 526 | 5 |
