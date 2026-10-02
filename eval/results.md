@@ -34,41 +34,42 @@ The corpus has 36 candidate PEPs in the training graph, so a random ranking woul
 | 846: Docstrings for Type Aliases | 695 | 695 | 1.00 |
 | 849: More Expressive Type Expressions | 586, 649 | 649 | 0.50 |
 
-# Evaluation: verdict accuracy
+# Verdict accuracy, set 1 (dev: its failures motivated the rule changes)
 
-26 hand-labelled proposals in `eval/verdict_cases.json`, written and frozen before the system was run on them, and disjoint from the golden tests and examples used for tuning. Full graph.
+26 hand-labelled proposals in `eval/verdict_cases.json`, disjoint from the golden tests and examples. Full graph. Verdict benchmark. Hand-written proposals (paraphrased, no PEP text copied, no PEP numbers) with the verdict a typing practitioner would give. Written and frozen before the system was run on them. Disjoint from the golden tests (tests/test_reasoner.py) and from examples/, which were used for tuning. `also_acceptable` is set only where typing history supports two readings.
 
 | Metric | Score |
 |---|---|
 | Verdict exactly right | 14/26 (54%) |
 | Right or a listed acceptable alternative | 15/26 (58%) |
 | Right, counting both kinds of rejection as one ("was tried") | 14/26 (54%) |
+| Precedent claims (exists / in progress / rejected) that are right | 9/12 |
 | Expected PEP is the first one cited | 14/20 |
 | Expected PEP among the first three cited | 18/20 |
 
-## Confusion matrix (rows: expected, columns: system)
+### Confusion matrix (rows: expected, columns: system)
 
 | expected → got | ae | ip | pr | pra | eea | okt |
 |---|---|---|---|---|---|---|
-| already_exists | 2 | · | · | 1 | 1 | 1 |
-| in_progress | · | 3 | · | 1 | · | · |
+| already_exists | 2 | · | · | · | 1 | 2 |
+| in_progress | · | 3 | · | · | · | 1 |
 | previously_rejected | 1 | · | 2 | · | 1 | · |
-| previously_rejected_alternative | 2 | · | · | 2 | 1 | · |
+| previously_rejected_alternative | 1 | · | · | 1 | 1 | 2 |
 | extends_existing_area | 1 | · | · | 1 | 2 | · |
-| outside_known_territory | 1 | · | · | · | · | 3 |
+| outside_known_territory | · | · | · | · | · | 4 |
 
 Abbreviations: ae = already_exists, ip = in_progress, pr = previously_rejected, pra = previously_rejected_alternative, eea = extends_existing_area, okt = outside_known_territory.
 
-## Per case
+### Per case
 
 | Case | Expected | Got | Correct | Expected PEP | PEPs cited first |
 |---|---|---|---|---|---|
-| ae-self | already_exists | previously_rejected_alternative | no | 673 | 673, 698, 557 |
+| ae-self | already_exists | outside_known_territory | no | 673 | 673, 698, 557 |
 | ae-typeis | already_exists | extends_existing_area | no | 742 | 742, 724, 647 |
 | ae-deprecated | already_exists | already_exists | yes | 702 | 702, 698, 727 |
 | ae-dataclass-transform | already_exists | already_exists | yes | 681 | 681, 712, 557 |
 | ae-paramspec | already_exists | outside_known_territory | no | 612 | 637, 821, 612 |
-| ip-subscript-call | in_progress | previously_rejected_alternative | no | 718 | 695, 645, 484 |
+| ip-subscript-call | in_progress | outside_known_territory | no | 718 | 645, 484, 677 |
 | ip-readonly-attr | in_progress | in_progress | yes | 767 | 767, 705, 544 |
 | ip-type-checking-builtin | in_progress | in_progress | yes | 781 | 781, 563, 585 |
 | ip-alias-docstring | in_progress | in_progress | yes | 846 | 846, 695, 484 |
@@ -76,16 +77,61 @@ Abbreviations: ae = already_exists, ip = in_progress, pr = previously_rejected, 
 | pr-field-converter | previously_rejected | previously_rejected | yes | 712 | 712, 681, 557 |
 | pr-annotated-doc | previously_rejected | previously_rejected | yes | 727 | 727, 746, 835 |
 | pr-strict-typeguard | previously_rejected | already_exists | acceptable | 724 | 647, 724, 742 |
-| pra-all-protocols | previously_rejected_alternative | already_exists | no | 544 | 544, 557, 673 |
+| pra-all-protocols | previously_rejected_alternative | outside_known_territory | no | 544 | 544, 557, 673 |
 | pra-angle-brackets | previously_rejected_alternative | previously_rejected_alternative | yes | 695 | 484, 695, 718 |
 | pra-in-out-variance | previously_rejected_alternative | extends_existing_area | no | 695 | 695, 484, 718 |
 | pra-isinstance-generic | previously_rejected_alternative | already_exists | no | 585 | 585, 718, 645 |
-| pra-intersection | previously_rejected_alternative | previously_rejected_alternative | yes | 544 | 728, 764, 655 |
+| pra-intersection | previously_rejected_alternative | outside_known_territory | no | 544 | 764, 655, 692 |
 | eea-paramspec-kwonly | extends_existing_area | already_exists | no | 612 | 612, 696, 821 |
 | eea-literal-float | extends_existing_area | extends_existing_area | yes | 586 | 586, 675, 827 |
 | eea-newtype-union | extends_existing_area | previously_rejected_alternative | no | – | 675, 484, 645 |
 | eea-overload-from-mapping | extends_existing_area | extends_existing_area | yes | – | 586, 718, 484 |
 | okt-http-client | outside_known_territory | outside_known_territory | yes | – | 661, 3107, 526 |
 | okt-free-threading | outside_known_territory | outside_known_territory | yes | – | 645, 846, 781 |
-| okt-dict-hash-cache | outside_known_territory | already_exists | no | – | 589, 692, 764 |
+| okt-dict-hash-cache | outside_known_territory | outside_known_territory | yes | – | 589, 692, 764 |
 | okt-lazy-logging | outside_known_territory | outside_known_territory | yes | – | 675, 727, 649 |
+
+# Verdict accuracy, set 2 (hold-out: frozen before the rule changes)
+
+14 hand-labelled proposals in `eval/verdict_cases_holdout.json`, disjoint from the golden tests and examples. Full graph. Second verdict set, written and frozen after the first benchmark exposed failure patterns and before the verdict rule was changed to address them. The first set (verdict_cases.json) motivated the changes, so it is now the dev set; this one is the honest test. It includes cases each change could break: accepted PEPs with many rejected ideas of their own, and non-typing inputs that use typing-like words.
+
+| Metric | Score |
+|---|---|
+| Verdict exactly right | 8/14 (57%) |
+| Right or a listed acceptable alternative | 8/14 (57%) |
+| Right, counting both kinds of rejection as one ("was tried") | 8/14 (57%) |
+| Precedent claims (exists / in progress / rejected) that are right | 4/7 |
+| Expected PEP is the first one cited | 6/10 |
+| Expected PEP among the first three cited | 10/10 |
+
+### Confusion matrix (rows: expected, columns: system)
+
+| expected → got | ae | ip | pr | pra | eea | okt |
+|---|---|---|---|---|---|---|
+| already_exists | 1 | · | · | 2 | 1 | · |
+| in_progress | · | 1 | · | · | · | · |
+| previously_rejected | · | · | · | · | · | 1 |
+| previously_rejected_alternative | 1 | · | · | 2 | · | 1 |
+| extends_existing_area | · | · | · | · | · | · |
+| outside_known_territory | · | · | · | · | · | 4 |
+
+Abbreviations: ae = already_exists, ip = in_progress, pr = previously_rejected, pra = previously_rejected_alternative, eea = extends_existing_area, okt = outside_known_territory.
+
+### Per case
+
+| Case | Expected | Got | Correct | Expected PEP | PEPs cited first |
+|---|---|---|---|---|---|
+| h-ae-readonly-items | already_exists | previously_rejected_alternative | no | 705 | 705, 655, 728 |
+| h-ae-variadic | already_exists | previously_rejected_alternative | no | 646 | 646, 484, 673 |
+| h-ae-sentinel | already_exists | already_exists | yes | 661 | 661, 637, 712 |
+| h-ae-type-defaults | already_exists | extends_existing_area | no | 696 | 696, 484, 718 |
+| h-pra-readonly-flag | previously_rejected_alternative | previously_rejected_alternative | yes | 705 | 655, 705, 728 |
+| h-pra-ellipsis-sentinel | previously_rejected_alternative | already_exists | no | 661 | 661, 655, 637 |
+| h-pra-mutable-defaults | previously_rejected_alternative | previously_rejected_alternative | yes | 557 | 681, 557, 712 |
+| h-pra-shape-arithmetic | previously_rejected_alternative | outside_known_territory | no | 646 | 646, 612, 645 |
+| h-pr-kwargs-index-typed | previously_rejected | outside_known_territory | no | 637 | 677, 696, 637 |
+| h-ip-inline-annotated | in_progress | in_progress | yes | 835 | 746, 727, 835 |
+| h-okt-frozendict | outside_known_territory | outside_known_territory | yes | – | 589, 764, 781 |
+| h-okt-pattern-matching | outside_known_territory | outside_known_territory | yes | – | 661, 747, 846 |
+| h-okt-walrus | outside_known_territory | outside_known_territory | yes | – | 849, 692, 645 |
+| h-okt-zoneinfo | outside_known_territory | outside_known_territory | yes | – | 586, 3107, 846 |

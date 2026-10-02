@@ -392,6 +392,16 @@ class Engine:
                     "summary": "The input does not map onto any typing concept in the knowledge base and no PEP "
                                "is a close textual match. Either it is genuinely new ground or it is outside the "
                                "typing corpus (this system only knows typing PEPs)."}
+        if not prof.concepts:
+            # Shared words are not a precedent: "dictionary lookups ... string keys" once
+            # came back as "already exists -> TypedDict". Name the nearest PEP, claim nothing.
+            tn = self.peps[peps[0]["id"]]
+            return {"label": "outside_known_territory", "confidence": "low",
+                    "summary": f"No typing concept was recognised, so no precedent is claimed. The closest PEP by "
+                               f"wording alone is PEP {tn['number']} ({tn['title']}); check it, but treat the match "
+                               "as weak. If the proposal is about typing, naming the construct involved "
+                               "(e.g. TypedDict, Protocol, ParamSpec) lets the knowledge base anchor it.",
+                    "basis": {"top_score": peps[0]["score"], "wording_only": True}}
         top = peps[0] if peps else None
         tn = self.peps[top["id"]] if top else None
         if top and top["score"] >= STRONG_MATCH and (top["text_cosine"] >= STRONG_TEXT

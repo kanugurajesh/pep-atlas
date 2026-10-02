@@ -69,3 +69,10 @@ def test_objection_quotes_come_from_listed_sources(engine):
         for o in r["objections_to_prepare_for"]:
             for ex in o["examples"]:
                 assert ex["source"] in ideas or int(ex["source"].split()[1]) in area, ex
+
+
+def test_wording_alone_claims_no_precedent(engine):
+    # No typing concept: shared words ("dictionary", "keys") once gave "already exists -> TypedDict".
+    r = engine.assess("Speed up dictionary lookups by caching hash values of string keys inside the interpreter.")
+    assert r["verdict"]["label"] == "outside_known_territory"
+    assert r["verdict"]["basis"]["wording_only"]

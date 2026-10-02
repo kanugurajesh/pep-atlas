@@ -27,10 +27,14 @@ from .parse import paragraphs
 from .reasoner import Engine
 
 CUTOFF = "2023-01-01"
-VERDICT_CASES = ROOT / "eval" / "verdict_cases.json"
+VERDICT_SETS = {   # file -> heading; the first set motivated the verdict-rule changes, the hold-out tests them
+    ROOT / "eval" / "verdict_cases.json": "Verdict accuracy, set 1 (dev: its failures motivated the rule changes)",
+    ROOT / "eval" / "verdict_cases_holdout.json": "Verdict accuracy, set 2 (hold-out: frozen before the rule changes)",
+}
 LABELS = ["already_exists", "in_progress", "previously_rejected", "previously_rejected_alternative",
           "extends_existing_area", "outside_known_territory"]
 TRIED = {"previously_rejected", "previously_rejected_alternative"}      # both mean "this was tried and turned down"
+PRECEDENT = TRIED | {"already_exists", "in_progress"}                 # verdicts that point the user at specific prior work
 
 VARIANTS = {
     "text only (TF-IDF baseline)": dict(w_concept=0.0, w_text=1.0, spread=0.0),
@@ -95,7 +99,9 @@ def run(write: bool = True) -> str:
         g = ", ".join(str(full.nodes[x]["number"]) for x in sorted(gold, key=lambda x: full.nodes[x]["number"]))
         hits = ", ".join(str(full.nodes[x]["number"]) for x in top if x in gold) or "–"
         L.append(f"| {num}: {full.nodes[f'pep:{num}']['title']} | {g} | {hits} | {rec:.2f} |")
-    L += ["", *verdict_section(Engine(full))]
+    verdict_engine = Engine(full)
+    for path, heading in VERDICT_SETS.items():
+        L += ["", *verdict_section(verdict_engine, path, heading)]
     md = "\n".join(L) + "\n"
     if write:
         out = ROOT / "eval" / "results.md"
@@ -104,14 +110,15 @@ def run(write: bool = True) -> str:
     return md
 
 
-def load_verdict_cases() -> list[dict]:
-    return json.loads(VERDICT_CASES.read_text(encoding="utf-8"))["cases"]
+def load_verdict_cases(path=None) -> list[dict]:
+    paths = [path] if path else list(VERDICT_SETS)
+    return [c for p in paths for c in json.loads(p.read_text(encoding="utf-8"))["cases"]]
 
 
-def verdict_section(engine: Engine) -> list[str]:
-    cases = load_verdict_cases()
+def verdict_section(engine: Engine, path, heading: str) -> list[str]:
+    cases = load_verdict_cases(path)
     rows, confusion = [], Counter()
-    strict = lenient = tried = pep_cases = pep_top1 = pep_top3 = 0
+    strict = lenient = tried = pep_cases = pep_top1 = pep_top3 = claims = claims_ok = 0
     for c in cases:
         r = engine.assess(c["text"])
         got, want = r["verdict"]["label"], c["expected_label"]
@@ -121,6 +128,8 @@ def verdict_section(engine: Engine) -> list[str]:
         lenient += accepted
         tried += ok or (got in TRIED and want in TRIED)
         confusion[want, got] += 1
+        claims += got in PRECEDENT
+        claims_ok += got in PRECEDENT and accepted
         # The PEP the verdict rests on comes first, then the closest PEPs.
         cited = [r["verdict"].get("basis", {}).get("pep")] + [p["pep"] for p in r["closest_peps"]]
         cited = [p for i, p in enumerate(cited) if p and p not in cited[:i]]
@@ -132,20 +141,21 @@ def verdict_section(engine: Engine) -> list[str]:
                     f"| {c.get('expected_pep') or '–'} | {', '.join(map(str, cited[:3])) or '–'} |")
     n = len(cases)
     short = {l: "".join(w[0] for w in l.split("_")) for l in LABELS}
-    L = ["# Evaluation: verdict accuracy", "",
-         f"{n} hand-labelled proposals in `eval/verdict_cases.json`, written and frozen before the system was run "
-         "on them, and disjoint from the golden tests and examples used for tuning. Full graph.", "",
+    L = [f"# {heading}", "",
+         f"{n} hand-labelled proposals in `eval/{path.name}`, disjoint from the golden tests and examples. Full graph. "
+         + json.loads(path.read_text(encoding="utf-8"))["about"], "",
          "| Metric | Score |", "|---|---|",
          f"| Verdict exactly right | {strict}/{n} ({strict / n:.0%}) |",
          f"| Right or a listed acceptable alternative | {lenient}/{n} ({lenient / n:.0%}) |",
          f"| Right, counting both kinds of rejection as one (\"was tried\") | {tried}/{n} ({tried / n:.0%}) |",
+         f"| Precedent claims (exists / in progress / rejected) that are right | {claims_ok}/{claims} |",
          f"| Expected PEP is the first one cited | {pep_top1}/{pep_cases} |",
          f"| Expected PEP among the first three cited | {pep_top3}/{pep_cases} |", "",
-         "## Confusion matrix (rows: expected, columns: system)", "",
+         "### Confusion matrix (rows: expected, columns: system)", "",
          "| expected → got | " + " | ".join(short[l] for l in LABELS) + " |",
          "|---|" + "---|" * len(LABELS)]
     L += [f"| {l} | " + " | ".join(str(confusion[l, g] or "·") for g in LABELS) + " |" for l in LABELS]
     L += ["", "Abbreviations: " + ", ".join(f"{short[l]} = {l}" for l in LABELS) + ".", "",
-          "## Per case", "", "| Case | Expected | Got | Correct | Expected PEP | PEPs cited first |",
+          "### Per case", "", "| Case | Expected | Got | Correct | Expected PEP | PEPs cited first |",
           "|---|---|---|---|---|---|", *rows]
     return L
