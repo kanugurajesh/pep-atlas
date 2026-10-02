@@ -106,7 +106,7 @@ def run(write: bool = True) -> str:
     if write:
         out = ROOT / "eval" / "results.md"
         out.parent.mkdir(exist_ok=True)
-        out.write_text(md, encoding="utf-8")
+        out.write_text(md, encoding="utf-8", newline="\n")
     return md
 
 

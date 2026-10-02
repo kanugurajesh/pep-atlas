@@ -17,8 +17,8 @@ from .graph import KnowledgeGraph
 def write_all(g: KnowledgeGraph):
     g.save(GRAPH_PATH)
     data = g.to_json()
-    (KNOWLEDGE_DIR / "schema.json").write_text(json.dumps(data["schema"], indent=2) + "\n", encoding="utf-8")
-    (KNOWLEDGE_DIR / "summary.md").write_text(summary_md(g), encoding="utf-8")
+    (KNOWLEDGE_DIR / "schema.json").write_text(json.dumps(data["schema"], indent=2) + "\n", encoding="utf-8", newline="\n")
+    (KNOWLEDGE_DIR / "summary.md").write_text(summary_md(g), encoding="utf-8", newline="\n")
     try:
         from .viewer import write_viewer
         write_viewer(g, KNOWLEDGE_DIR / "graph.html")

@@ -10,7 +10,7 @@
 > ```
 > Then open [`knowledge/graph.html`](knowledge/graph.html) in a browser and click any node to see its edges and the sentence each one came from.
 >
-> **Measured, not just demoed:** on a time-based hold-out, concept anchoring improves the rank of the first right PEP over plain text search (MRR 0.70 → 0.81). Verdicts are scored on 40 hand-labelled proposals: a dev set of 26 that exposed failure patterns, and a hold-out set of 14 frozen before any rule was changed. The expected PEP is among the first three cited in 28 of 30 cases. The single-label verdict is the weak step (8/14 on the hold-out), and [approach.md §5–6](approach.md#5-evaluation) explains why, including one fix kept and one tried and not applied. 40 tests, deterministic build.
+> **Measured, not just demoed:** on a time-based hold-out, concept anchoring improves the rank of the first right PEP over plain text search (MRR 0.70 → 0.81). Verdicts are scored on 40 hand-labelled proposals: a dev set of 26 that exposed failure patterns, and a hold-out set of 14 frozen before any rule was changed. The expected PEP is among the first three cited in 28 of 30 cases. The single-label verdict is the weak step (8/14 on the hold-out), and [approach.md §5–6](approach.md#5-evaluation) explains why, including one fix kept and one tried and not applied. 41 tests, deterministic build.
 
 You describe a typing feature you're thinking of proposing, in plain English. PEP Atlas reasons over a knowledge graph built from 55 typing PEPs and tells you:
 
@@ -54,7 +54,7 @@ The knowledge state (`knowledge/`) is committed, so `assess` and `explain` work 
 | `python -m pepatlas build` | Rebuilds the whole knowledge state from `data/raw/` (about 10 s, deterministic). |
 | `python -m pepatlas eval` | Temporal hold-out retrieval evaluation plus the verdict benchmark (dev set `eval/verdict_cases.json`, hold-out `eval/verdict_cases_holdout.json`), writes `eval/results.md`. |
 | `python -m pepatlas fetch` | Re-downloads the PEP sources at the pinned commit (needs git and network access; only needed to refresh `data/raw/`). |
-| `python -m pytest` | 40 tests: parser, lexicon rules, extraction checked against known typing history, reasoning golden cases, output precision and grounding, benchmark case validity, build determinism (also across hash seeds). |
+| `python -m pytest` | 41 tests: parser, lexicon rules, extraction checked against known typing history, reasoning golden cases, output precision and grounding, benchmark case validity, build determinism (also across hash seeds). |
 
 Try the inputs in [`examples/`](examples/). Each `NN_*.txt` has its generated `.out.md` and `.out.json` next to it.
 

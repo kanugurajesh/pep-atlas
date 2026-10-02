@@ -122,6 +122,7 @@ The reasoner (`reasoner.py`) reads only `knowledge/graph.json`, never the raw fi
    - `DISCUSSED_AT` of the most recent related PEP, for the venue.
 4. **Decide.**
    - **No recognised concept → no precedent claimed.** The verdict is *outside known territory*, naming the closest PEP by wording as a weak lead (see §5, Fix 1).
+   - **An explicitly named PEP counts as an anchor, not as a verdict.** "I want to revive PEP 677" has no concept but does name a PEP, so the report leads with that PEP and its status. Naming a PEP does not by itself claim sameness ("extend PEP 484 to …"), so it never produces an *exists / rejected* label on its own.
    - **A PEP is a strong match** if its score is ≥ 0.62 and either the wording (cosine ≥ 0.22) or the concepts (≥ 0.8) also match. The verdict then depends on that PEP's outcome: *already exists*, *previously rejected* or *in progress*.
    - **A rejected idea is a strong match** at score ≥ 0.55. The verdict is then *previously rejected as an alternative*, naming the idea and the revisit if there was one.
    - **Otherwise:** *builds on an existing area* if concepts matched, *outside known territory* if not.

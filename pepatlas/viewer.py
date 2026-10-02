@@ -91,4 +91,4 @@ def write_viewer(g: KnowledgeGraph, path: Path):
     slim = {"nodes": data["nodes"], "edges": data["edges"]}
     html = TEMPLATE.replace("__DATA__", json.dumps(slim, ensure_ascii=False).replace("</", "<\\/")) \
                    .replace("__COLORS__", json.dumps(COLORS))
-    path.write_text(html, encoding="utf-8")
+    path.write_text(html, encoding="utf-8", newline="\n")
